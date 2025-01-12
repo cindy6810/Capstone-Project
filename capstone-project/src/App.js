@@ -7,7 +7,7 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Tunely is a Music Streaming App where you can listen to your favourite songs as well as make playlists.
         </p>
         <a
           className="App-link"
