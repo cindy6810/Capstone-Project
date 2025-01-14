@@ -4,4 +4,4 @@
 
 App Name: Tunely
 
-Description: Listen to Music, Make playlists
+Description: Listen to Music, Make playlists, Interact with Music Artits
