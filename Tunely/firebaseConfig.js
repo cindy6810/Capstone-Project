@@ -12,8 +12,8 @@ const firebaseConfig = {
   projectId: "tunely-111",
   storageBucket: "tunely-111.firebasestorage.app",
   messagingSenderId: "209540280192",
-  appId: "1:209540280192:web:3dea184079a814a6df1b65",
-  measurementId: "G-FXYG5NPNBK"
+  appId: "1:209540280192:web:e7b8139efd06deeddf1b65",
+  measurementId: "G-B6D765XB6G"
 };
 
 // Initialize Firebase
