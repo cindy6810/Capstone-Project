@@ -3,18 +3,33 @@ import { StyleSheet, Text, View, FlatList, TextInput, TouchableOpacity } from "r
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-
-// Firebase
-import firebase from "firebase/app";
-import "firebase/firestore"; // If using Firestore
-import { firebaseConfig } from "./firebaseConfig"; // Your Firebase Config
-
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { firebase } from "./firebase"; // Import your firebase configuration
 
 // Tab Navigator
 const Tab = createBottomTabNavigator();
+
+// Save Data to AsyncStorage
+const storeData = async (key, value) => {
+  try {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+    console.log("Data saved successfully!");
+  } catch (error) {
+    console.error("Error saving data:", error);
+  }
+};
+
+// Load Data from AsyncStorage
+const getData = async (key) => {
+  try {
+    const value = await AsyncStorage.getItem(key);
+    if (value !== null) {
+      return JSON.parse(value);
+    }
+  } catch (error) {
+    console.error("Error retrieving data:", error);
+  }
+};
 
 // Home Page
 function HomeScreen() {
@@ -42,7 +57,11 @@ function HomeScreen() {
 function SearchScreen() {
   return (
     <View style={styles.container}>
-      <TextInput style={styles.searchBar} placeholder="Search songs, artists..." placeholderTextColor="#727D73" />
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search songs, artists..."
+        placeholderTextColor="#727D73"
+      />
       <FlatList
         data={[
           { id: "1", title: "Search Result 1" },
@@ -59,8 +78,21 @@ function SearchScreen() {
   );
 }
 
-// Library Page
+// Library Page with AsyncStorage integration
 function LibraryScreen() {
+  const saveLikedSongs = async () => {
+    const likedSongs = [
+      { id: "1", title: "Liked Song 1" },
+      { id: "2", title: "Liked Song 2" },
+    ];
+    await storeData("likedSongs", likedSongs);
+  };
+
+  const loadLikedSongs = async () => {
+    const songs = await getData("likedSongs");
+    console.log("Loaded Liked Songs:", songs);
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Your Library</Text>
@@ -76,6 +108,12 @@ function LibraryScreen() {
           </TouchableOpacity>
         )}
       />
+      <TouchableOpacity onPress={saveLikedSongs} style={styles.songCard}>
+        <Text style={styles.songTitle}>Save Liked Songs</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={loadLikedSongs} style={styles.songCard}>
+        <Text style={styles.songTitle}>Load Liked Songs</Text>
+      </TouchableOpacity>
     </View>
   );
 }
