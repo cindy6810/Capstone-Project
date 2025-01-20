@@ -1,5 +1,5 @@
-# Capstone-Project
- This is our Music App for our Capstone Project
+# Tunely
+Welcome to our Capstone Project! E-Devs present to you: Tunely!
 
 
 App Name: Tunely
