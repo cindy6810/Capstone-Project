@@ -8,4 +8,4 @@ Description: Listen to Music, Make playlists, Interact with Music Artists.
 You can listen to songs, like songs, comment on songs. You can save songs to playlists.
 You can Upload Songs.
 
-Authors: Malek, Nasser, Kaleb
+Authors: Malek, Nasser, Kaleb, Yassine, Vardan
