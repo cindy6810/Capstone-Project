@@ -1,7 +1,8 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 
@@ -10,12 +11,15 @@ import HomeScreen from "./screens/Home";
 import SearchScreen from "./screens/Search";
 import LibraryScreen from "./screens/Library";
 import ProfileScreen from "./screens/Profile";
+import LoginScreen from "./screens/Login"; // New Login Screen
+import SignUpScreen from "./screens/SignUp"; // New Sign-Up Screen
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-export default function App() {
+function TabNavigator() {
   return (
-    <NavigationContainer>
+    <>
       {/* Top bar */}
       <View style={styles.topBar}>
         <Text style={styles.title}>Tunely</Text>
@@ -44,14 +48,25 @@ export default function App() {
           tabBarActiveTintColor: "#E14594",
           tabBarInactiveTintColor: "#7045AF",
           tabBarStyle: { backgroundColor: "#182952" },
-          headerShown: false, 
+          headerShown: false,
         })}
       >
         <Tab.Screen name="Home" component={HomeScreen} />
         <Tab.Screen name="Search" component={SearchScreen} />
         <Tab.Screen name="Library" component={LibraryScreen} />
       </Tab.Navigator>
-    </NavigationContainer>
+    </>
   );
 }
 
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="MainApp" component={TabNavigator} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
