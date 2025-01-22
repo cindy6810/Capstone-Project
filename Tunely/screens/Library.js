@@ -21,26 +21,3 @@ export default function LibraryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F0F0D7",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#727D73",
-    marginBottom: 20,
-  },
-  songCard: {
-    backgroundColor: "#AAB99A",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  songTitle: {
-    color: "#F0F0D7",
-    fontWeight: "bold",
-  },
-});
