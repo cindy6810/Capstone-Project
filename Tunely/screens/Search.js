@@ -1,14 +1,16 @@
 import React from "react";
-import { StyleSheet, TextInput, View, FlatList, TouchableOpacity, Text } from "react-native";
+import { TextInput, View, FlatList, TouchableOpacity, Text } from "react-native";
 
 export default function SearchScreen() {
   return (
     <View style={styles.container}>
+      {/* Search bar */}
       <TextInput
         style={styles.searchBar}
         placeholder="Search songs, artists..."
-        placeholderTextColor="#727D73"
+        placeholderTextColor="#E14594"
       />
+      {/* Search results */}
       <FlatList
         data={[
           { id: "1", title: "Search Result 1" },
@@ -24,28 +26,3 @@ export default function SearchScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F0F0D7",
-    padding: 20,
-  },
-  searchBar: {
-    backgroundColor: "#D0DDD0",
-    borderRadius: 25,
-    padding: 10,
-    marginBottom: 20,
-    color: "#727D73",
-  },
-  songCard: {
-    backgroundColor: "#AAB99A",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  songTitle: {
-    color: "#F0F0D7",
-    fontWeight: "bold",
-  },
-});
