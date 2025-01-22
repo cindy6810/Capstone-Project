@@ -1,5 +1,6 @@
 import React from "react";
-import { StyleSheet, Text, View, FlatList, TouchableOpacity } from "react-native";
+import { Text, View, FlatList, TouchableOpacity } from "react-native";
+import { styles } from "./styles";
 
 export default function HomeScreen() {
   return (
@@ -22,27 +23,3 @@ export default function HomeScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F0F0D7",
-    padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#727D73",
-    marginBottom: 20,
-  },
-  songCard: {
-    backgroundColor: "#AAB99A",
-    padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
-  },
-  songTitle: {
-    color: "#F0F0D7",
-    fontWeight: "bold",
-  },
-});
