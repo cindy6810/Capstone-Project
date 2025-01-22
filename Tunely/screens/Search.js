@@ -8,7 +8,7 @@ export default function SearchScreen() {
       {/* Search bar */}
       <TextInput
         style={styles.searchBar}
-        placeholder="Search songs, artists..."
+        placeholder="Search song, artist, album..."
         placeholderTextColor="#E14594"
       />
       {/* Search results */}
