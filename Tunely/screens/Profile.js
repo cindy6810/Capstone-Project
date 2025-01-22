@@ -9,16 +9,3 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F0F0D7",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#727D73",
-  },
-});
