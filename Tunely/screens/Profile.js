@@ -3,7 +3,8 @@ import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-na
 import * as ImagePicker from "expo-image-picker";
 import { styles } from "../styles";
 import { Ionicons } from "@expo/vector-icons";
-import { auth, storage, database } from "../firebase"; // Assuming Firebase is configured
+import { auth } from "../firebase"; // Adjust import to your Firebase config
+import { getUserData, updateUserData, uploadProfilePicture } from "../firebase"; // Import relevant functions
 
 export default function ProfileScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -15,13 +16,11 @@ export default function ProfileScreen({ navigation }) {
     const fetchUserData = async () => {
       try {
         const userId = auth.currentUser.uid; // Get the current user's ID
-        const userRef = database.ref(`users/${userId}`);
-        const snapshot = await userRef.once("value");
+        const userData = await getUserData(userId);
 
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          setUsername(data.username || "User");
-          setProfilePic(data.profilePic || null); // Use default if no picture is set
+        if (userData) {
+          setUsername(userData.username || "User");
+          setProfilePic(userData.profilePic || null); // Use default if no picture is set
         }
         setLoading(false);
       } catch (error) {
@@ -44,20 +43,15 @@ export default function ProfileScreen({ navigation }) {
 
     if (!result.canceled) {
       try {
-        const response = await fetch(result.uri);
-        const blob = await response.blob();
         const userId = auth.currentUser.uid;
-        const storageRef = storage.ref().child(`profilePictures/${userId}`);
-        await storageRef.put(blob);
-        const downloadURL = await storageRef.getDownloadURL();
+        const downloadURL = await uploadProfilePicture(userId, result.uri);
 
-        // Update in the database
-        const userRef = database.ref(`users/${userId}`);
-        await userRef.update({ profilePic: downloadURL });
+        // Update profile picture URL in Firebase
+        await updateUserData(userId, { profilePic: downloadURL });
 
         setProfilePic(downloadURL); // Update locally
       } catch (error) {
-        console.error("Error uploading profile picture:", error);
+        console.error("Error changing profile picture:", error);
       }
     }
   };
