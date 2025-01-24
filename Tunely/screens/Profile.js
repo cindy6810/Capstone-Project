@@ -79,7 +79,7 @@ export default function ProfileScreen({ navigation }) {
       console.error("Error signing out: ", error);
     }
   };
-
+  
   return (
     <View style={styles.container}>
       {/* Back Button */}
@@ -142,3 +142,4 @@ export default function ProfileScreen({ navigation }) {
     </View>
   );
 }
+

@@ -5,17 +5,17 @@ import { NavigationContainer } from "@react-navigation/native";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
-
+ 
 // Import screens
 import HomeScreen from "./screens/Home";
 import SearchScreen from "./screens/Search";
 import LibraryScreen from "./screens/Library";
 import ProfileScreen from "./screens/Profile";
 import SettingsScreen from "./screens/Settings";
-
+ 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
+ 
 function TabNavigator({ navigation }) {
   return (
     <>
@@ -29,7 +29,7 @@ function TabNavigator({ navigation }) {
           <Ionicons name="person-circle-outline" size={30} color="#f1f1f1" />
         </TouchableOpacity>
       </View>
-
+ 
       {/* Bottom Navigation */}
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -57,7 +57,7 @@ function TabNavigator({ navigation }) {
     </>
   );
 }
-
+ 
 export default function App() {
   return (
     <NavigationContainer>
@@ -69,3 +69,4 @@ export default function App() {
     </NavigationContainer>
   );
 }
+ 

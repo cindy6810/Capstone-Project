@@ -33,7 +33,8 @@ export const styles = StyleSheet.create({
     paddingTop: 40, // For status bar spacing
   },
   profileButton: {
-    padding: 5,
+    padding: 2,
+    marginTop: 30,
   },
   searchBar: {
     backgroundColor: "#f1f1f1", // Purple for search bar
