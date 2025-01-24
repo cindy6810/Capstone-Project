@@ -1,5 +1,4 @@
 import React from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -12,28 +11,26 @@ import HomeScreen from "./screens/Home";
 import SearchScreen from "./screens/Search";
 import LibraryScreen from "./screens/Library";
 import ProfileScreen from "./screens/Profile";
-import LoginScreen from "./screens/Login"; // New Login Screen
-import SignUpScreen from "./screens/SignUp"; // New Sign-Up Screen
-import LoginFormPage from "./screens/LoginFormPage";
+import SettingsScreen from "./screens/Settings";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function TabNavigator() {
+function TabNavigator({ navigation }) {
   return (
     <>
-      {/* Top bar */}
+      {/* Top Bar with Profile Button */}
       <View style={styles.topBar}>
         <Text style={styles.title}>Tunely</Text>
         <TouchableOpacity
           style={styles.profileButton}
-          onPress={() => alert("Profile Button Pressed")}
+          onPress={() => navigation.navigate("Profile")}
         >
-          <Ionicons name="person-circle-outline" size={30} color="#E14594" />
+          <Ionicons name="person-circle-outline" size={30} color="#f1f1f1" />
         </TouchableOpacity>
       </View>
 
-      {/* Bottom navigation */}
+      {/* Bottom Navigation */}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -47,9 +44,9 @@ function TabNavigator() {
             }
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: "#E14594",
-          tabBarInactiveTintColor: "#7045AF",
-          tabBarStyle: { backgroundColor: "#182952" },
+          tabBarActiveTintColor: "#f1f1f1",
+          tabBarInactiveTintColor: "#666",
+          tabBarStyle: styles.tabBarStyle,
           headerShown: false,
         })}
       >
@@ -64,11 +61,10 @@ function TabNavigator() {
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Login" component={LoginScreen} />
-        <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="LoginFormPage" component={LoginFormPage} /> 
+      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Home" component={TabNavigator} />
+        <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
