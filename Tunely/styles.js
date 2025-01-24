@@ -47,4 +47,59 @@ export const styles = StyleSheet.create({
   tabBarStyle: {
     backgroundColor: "#213555", // Match top bar
   },
+
+  //Song Detail styles
+
+  songDetailsContainer: {
+    flex: 1,
+    justifyContent: "flex-start", 
+    alignItems: "center",
+    backgroundColor: "#1a1a1a",
+    paddingTop: 50, 
+  },
+  songTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#f1f1f1",
+    textAlign: "left",
+    alignSelf: "flex-start",
+  },
+  songImage: {
+    width: 350,
+    height: 350,
+    marginVertical: 20,
+  },
+  controls: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "80%",
+  },
+  imageTitleContainer: {
+    alignItems: "flex-start",
+  },
+  sliderContainer: {
+    width: "80%",
+    marginVertical: 20,
+  },
+  slider: {
+    width: "100%",
+  },
+  sliderContainer: {
+    width: "80%",
+    marginVertical: 20,
+  },
+  slider: {
+    width: "100%",
+  },
+  iconButton: {
+    padding: 10,
+  },
+  timeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  timeText: {
+    color: "#fff",
+  },
 });
