@@ -15,7 +15,6 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
@@ -65,5 +64,6 @@ export const uploadProfilePicture = async (userId, uri) => {
     console.error("Error uploading profile picture:", error);
   }
 };
+
 
 export default app;
