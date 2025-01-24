@@ -7,8 +7,8 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
-import { signUpWithEmailAndPassword, signInWithGoogle } from "../Utility/firebaseConfig"; // Ensure this path is correct
+import { useNavigation } from "@react-navigation/native"; 
+import { signUpWithEmailAndPassword, signInWithGoogle } from "../Utility/firebaseConfig"; 
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -17,7 +17,7 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const navigation = useNavigation(); // Hook for navigation
+  const navigation = useNavigation(); 
 
   const handleSignUp = async () => {
     // Validate email and password
