@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   // General styles
   container: {
     flex: 1,
-    backgroundColor: "#1a1a1a", // Deep blue background
+    backgroundColor: "#1a1a1a", 
     padding: 20,
   },
   title: {
@@ -14,7 +14,7 @@ export const styles = StyleSheet.create({
     marginBottom: 20,
   },
   songCard: {
-    backgroundColor: "#7045AF", // Purple for song cards
+    backgroundColor: "#182952", // Purple for song cards
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#2B3595", // Lighter blue for the top bar
+    backgroundColor: "#213555", 
     padding: 10,
     paddingTop: 40, // For status bar spacing
   },
@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     marginTop: 30,
   },
   searchBar: {
-    backgroundColor: "#7045AF", // Purple for search bar
+    backgroundColor: "#f1f1f1", // Purple for search bar
     borderRadius: 25,
     padding: 10,
     marginBottom: 20,
@@ -45,6 +45,6 @@ export const styles = StyleSheet.create({
   },
   // Tab bar customization
   tabBarStyle: {
-    backgroundColor: "#2B3595", // Match top bar
+    backgroundColor: "#213555", // Match top bar
   },
 });
