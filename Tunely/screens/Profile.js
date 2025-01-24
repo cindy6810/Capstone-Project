@@ -1,61 +1,121 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { styles } from "../styles"; // Assuming you already have a styles file
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { styles } from "../styles";
+import { Ionicons } from "@expo/vector-icons";
+import { auth, storage, database } from "../firebase"; // Assuming Firebase is configured
 
-export default function ProfileScreen() {
-  const navigation = useNavigation();
+export default function ProfileScreen({ navigation }) {
+  const [username, setUsername] = useState("");
+  const [profilePic, setProfilePic] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleSettingsNavigation = () => {
-    navigation.navigate("Settings"); // Navigates to the Settings page
+  // Fetch user data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userId = auth.currentUser.uid; // Get the current user's ID
+        const userRef = database.ref(`users/${userId}`);
+        const snapshot = await userRef.once("value");
+
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setUsername(data.username || "User");
+          setProfilePic(data.profilePic || null); // Use default if no picture is set
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  // Handle profile picture change
+  const changeProfilePicture = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      try {
+        const response = await fetch(result.uri);
+        const blob = await response.blob();
+        const userId = auth.currentUser.uid;
+        const storageRef = storage.ref().child(`profilePictures/${userId}`);
+        await storageRef.put(blob);
+        const downloadURL = await storageRef.getDownloadURL();
+
+        // Update in the database
+        const userRef = database.ref(`users/${userId}`);
+        await userRef.update({ profilePic: downloadURL });
+
+        setProfilePic(downloadURL); // Update locally
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+      }
+    }
   };
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#f1f1f1" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile Page</Text>
-      
+      {/* Back Button */}
+      <TouchableOpacity style={{ marginBottom: 20 }} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="#f1f1f1" />
+      </TouchableOpacity>
+
       {/* Profile Picture */}
       <Image
-        source={{ uri: "https://via.placeholder.com/100" }} // Replace with user's profile picture URL
-        style={profileStyles.profilePicture}
+        source={{
+          uri: profilePic || "https://via.placeholder.com/150", // Default picture
+        }}
+        style={{
+          width: 120,
+          height: 120,
+          borderRadius: 60,
+          borderWidth: 2,
+          borderColor: "#f1f1f1",
+          marginBottom: 20,
+        }}
       />
-      
-      {/* Buttons for Settings, Upload, and More Info */}
-      <TouchableOpacity style={profileStyles.button} onPress={handleSettingsNavigation}>
-        <Text style={profileStyles.buttonText}>Settings</Text>
+
+      {/* Change Profile Picture Button */}
+      <TouchableOpacity
+        style={{
+          ...styles.songCard,
+          alignItems: "center",
+        }}
+        onPress={changeProfilePicture}
+      >
+        <Text style={styles.songTitle}>Change Profile Picture</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={profileStyles.button}>
-        <Text style={profileStyles.buttonText}>Upload</Text>
-      </TouchableOpacity>
+      {/* Username */}
+      <Text style={styles.title}>{username}</Text>
 
-      <TouchableOpacity style={profileStyles.button}>
-        <Text style={profileStyles.buttonText}>More Info</Text>
+      {/* Additional Buttons */}
+      <TouchableOpacity
+        style={{
+          ...styles.songCard,
+          alignItems: "center",
+        }}
+        onPress={() => navigation.navigate("Settings")}
+      >
+        <Text style={styles.songTitle}>Settings</Text>
       </TouchableOpacity>
     </View>
   );
 }
-
-const profileStyles = StyleSheet.create({
-  profilePicture: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 20,
-    borderWidth: 2,
-    borderColor: "#fff",
-  },
-  button: {
-    backgroundColor: "#2B3595",
-    padding: 15,
-    borderRadius: 8,
-    width: "80%",
-    alignItems: "center",
-    marginVertical: 10,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-});
