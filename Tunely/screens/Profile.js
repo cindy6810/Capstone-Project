@@ -93,7 +93,7 @@ export default function ProfileScreen({ navigation }) {
               await signOut(auth);
               navigation.replace("Login");
             } catch (error) {
-              console.error("Error signing out:", error);
+              console.error("Error signing out: ", error);
               Alert.alert(
                 "Logout Error",
                 "There was an issue logging out. Please try again."
@@ -105,6 +105,7 @@ export default function ProfileScreen({ navigation }) {
       { cancelable: true }
     );
   };
+  
 
   return (
     <View style={styles.container}>
