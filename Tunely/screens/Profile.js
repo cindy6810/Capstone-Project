@@ -5,23 +5,30 @@ import { styles } from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../Utility/firebaseConfig";
 import { signOut } from "firebase/auth";
-import { getUserData, updateUserData, uploadProfilePicture } from "../Utility/firebaseConfig";
+import {
+  getUserData,
+  updateUserData,
+  uploadProfilePicture,
+} from "../Utility/firebaseConfig";
 
 export default function ProfileScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [profilePic, setProfilePic] = useState(null);
 
-  // Request permissions for image picker
   useEffect(() => {
+    // Request media library permissions
     const requestPermissions = async () => {
-      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert("Permission denied", "We need permission to access your photos.");
+        Alert.alert(
+          "Permission Denied",
+          "We need permission to access your photos."
+        );
       }
     };
 
-    requestPermissions();
-
+    // Fetch user data
     const fetchUserData = async () => {
       if (auth.currentUser) {
         try {
@@ -30,67 +37,87 @@ export default function ProfileScreen({ navigation }) {
 
           if (userData) {
             setUsername(userData.username || "User");
-            setProfilePic(userData.profilePic || null); // Use default if no picture is set
+            setProfilePic(userData.profilePic || null);
           }
         } catch (error) {
           console.error("Error fetching user data:", error);
+          Alert.alert("Error", "Failed to load user data.");
         }
       } else {
-        // If no user is logged in, navigate to Login screen
         navigation.replace("Login");
       }
     };
 
+    requestPermissions();
     fetchUserData();
   }, [navigation]);
 
-  // Handle profile picture change
+  // Change profile picture
   const changeProfilePicture = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Ensure media type is set to images only
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 0.8,
-    });
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
 
-    if (!result.canceled) {
-      try {
+      if (!result.canceled) {
         const userId = auth.currentUser.uid;
         const downloadURL = await uploadProfilePicture(userId, result.uri);
-
-        // Update profile picture URL in Firebase
         await updateUserData(userId, { profilePic: downloadURL });
-
-        setProfilePic(downloadURL); // Update locally
-      } catch (error) {
-        console.error("Error changing profile picture:", error);
+        setProfilePic(downloadURL);
+      } else {
+        Alert.alert("No Image Selected", "You didn't select an image.");
       }
-    } else {
-      Alert.alert("No image selected", "You didn't select an image.");
+    } catch (error) {
+      console.error("Error changing profile picture:", error);
+      Alert.alert("Error", "Failed to update profile picture.");
     }
   };
 
-  // Handle sign out
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      navigation.replace("Login"); // Redirect to login page after sign out
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
+  // Logout user
+  const handleLogout = () => {
+    Alert.alert(
+      "Confirm Logout",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Logout",
+          onPress: async () => {
+            try {
+              await signOut(auth);
+              navigation.replace("Login");
+            } catch (error) {
+              console.error("Error signing out:", error);
+              Alert.alert(
+                "Logout Error",
+                "There was an issue logging out. Please try again."
+              );
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
-  
+
   return (
     <View style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity style={{ marginBottom: 80, top: 50 }} onPress={() => navigation.goBack()}>
+      <TouchableOpacity
+        style={{ marginBottom: 80, top: 50 }}
+        onPress={() => navigation.goBack()}
+      >
         <Ionicons name="arrow-back" size={24} color="#f1f1f1" />
       </TouchableOpacity>
 
-      {/* Profile Picture */}
       <Image
         source={{
-          uri: profilePic || "https://via.placeholder.com/150", // Default picture
+          uri: profilePic || "https://via.placeholder.com/150",
         }}
         style={{
           width: 120,
@@ -99,11 +126,11 @@ export default function ProfileScreen({ navigation }) {
           borderWidth: 2,
           borderColor: "#f1f1f1",
           marginBottom: 50,
-          marginLeft: 140,
+          marginLeft: "auto",
+          marginRight: "auto",
         }}
       />
 
-      {/* Change Profile Picture Button */}
       <TouchableOpacity
         style={{
           ...styles.songCard,
@@ -114,10 +141,8 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.songTitle}>Change Profile Picture</Text>
       </TouchableOpacity>
 
-      {/* Username */}
       <Text style={styles.title}>{username}</Text>
 
-      {/* Settings Button */}
       <TouchableOpacity
         style={{
           ...styles.songCard,
@@ -128,12 +153,11 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.songTitle}>Settings</Text>
       </TouchableOpacity>
 
-      {/* Logout Button */}
       <TouchableOpacity
         style={{
           ...styles.songCard,
           alignItems: "center",
-          marginTop: 20, // Added spacing between buttons
+          marginTop: 20,
         }}
         onPress={handleLogout}
       >
@@ -142,4 +166,3 @@ export default function ProfileScreen({ navigation }) {
     </View>
   );
 }
-
