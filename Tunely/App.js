@@ -6,6 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 // Import screens
 import HomeScreen from "./screens/Home";
@@ -15,6 +16,7 @@ import ProfileScreen from "./screens/Profile";
 import LoginScreen from "./screens/Login"; // New Login Screen
 import SignUpScreen from "./screens/SignUp"; // New Sign-Up Screen
 import LoginFormPage from "./screens/LoginFormPage";
+import SongDetailScreen from "./screens/SongDetail";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -63,13 +65,16 @@ function TabNavigator() {
 
 export default function App() {
   return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
         <Stack.Screen name="LoginFormPage" component={LoginFormPage} /> 
         <Stack.Screen name="Home" component={TabNavigator} />
+        <Stack.Screen name="SongDetail" component={SongDetailScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
