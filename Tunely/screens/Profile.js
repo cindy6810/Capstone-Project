@@ -105,7 +105,6 @@ export default function ProfileScreen({ navigation }) {
       { cancelable: true }
     );
   };
-  
 
   return (
     <View style={styles.container}>
