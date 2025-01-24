@@ -1,9 +1,8 @@
-import React from "react";
-import { View, Text, Image, Button } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Image } from "react-native";
 import { styles } from "../styles";
 import { useNavigation } from "@react-navigation/native";
-import { PanGestureHandler, State } from "react-native-gesture-handler";
-import { useState } from "react";
+import { PanGestureHandler } from "react-native-gesture-handler";
 
 import Scrubber from "../components/Scrubber";
 import PlayPauseButton from "../components/PlayPauseButton";
@@ -14,30 +13,27 @@ export default function SongDetailScreen({ route }) {
   const navigation = useNavigation();
   const [sliderValue, setSliderValue] = useState(0);
 
-
-  //used to swipe down to go back
+  // Handle swipe-down gesture to navigate back to the Home screen
   const onGestureEvent = (event) => {
     if (event.nativeEvent.translationY > 50) {
-      navigation.goBack();
+      navigation.navigate("Home"); // Explicitly navigate to the Home screen
     }
   };
-  
 
   return (
     <PanGestureHandler onGestureEvent={onGestureEvent}>
-    <View style={styles.songDetailsContainer}>
-    <View style={styles.imageTitleContainer}>
-      <Image source={song.image} style={styles.songImage} />
-      <Text style={styles.songTitle}>{song.title}</Text>
-    </View>
-    <Scrubber />
-    <View style={styles.controls}>
-        
-      <SkipButton direction="back" onPress={() => {}} />
-      <PlayPauseButton onPress={() => {}} />
-      <SkipButton direction="forward" onPress={() => {}} />
+      <View style={styles.songDetailsContainer}>
+        <View style={styles.imageTitleContainer}>
+          <Image source={song.image} style={styles.songImage} />
+          <Text style={styles.songTitle}>{song.title}</Text>
+        </View>
+        <Scrubber />
+        <View style={styles.controls}>
+          <SkipButton direction="back" onPress={() => {}} />
+          <PlayPauseButton onPress={() => {}} />
+          <SkipButton direction="forward" onPress={() => {}} />
+        </View>
       </View>
-    </View>
     </PanGestureHandler>
   );
 }
