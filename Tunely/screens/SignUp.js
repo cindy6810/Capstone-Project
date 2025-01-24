@@ -8,7 +8,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native"; 
-import { signUpWithEmailAndPassword, signInWithGoogle } from "../Utility/firebaseConfig"; 
+import { signUpWithEmailAndPassword } from "../Utility/firebaseConfig"; 
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -37,17 +37,6 @@ export default function SignUpPage() {
       navigation.navigate("Login");
     } catch (error) {
       Alert.alert("Error", error.message); 
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      const user = await signInWithGoogle();
-      Alert.alert("Success", `Signed in as ${user.displayName}`);
-      // Optionally, navigate to the homepage or dashboard
-      navigation.navigate("Home");
-    } catch (error) {
-      Alert.alert("Google Sign-In Error", error.message);
     }
   };
 
@@ -99,9 +88,6 @@ export default function SignUpPage() {
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
-        <Text style={styles.buttonText}>Sign Up with Google</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -112,7 +98,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1a1a1a", // Updated background color
+    backgroundColor: "#1a1a1a", 
   },
   title: {
     fontSize: 28,
@@ -137,14 +123,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#2B3595",
     fontWeight: "bold",
-  },
-  googleButton: {
-    backgroundColor: "#f1f1f1",
-    padding: 15,
-    borderRadius: 8,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 10,
   },
   backButton: {
     position: "absolute",
