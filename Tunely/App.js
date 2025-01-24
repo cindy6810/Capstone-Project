@@ -11,13 +11,14 @@ import HomeScreen from "./screens/Home";
 import SearchScreen from "./screens/Search";
 import LibraryScreen from "./screens/Library";
 import ProfileScreen from "./screens/Profile";
-import LoginScreen from "./screens/Login"; // New Login Screen
-import SignUpScreen from "./screens/SignUp"; // New Sign-Up Screen
+import LoginScreen from "./screens/Login"; 
+import SignUpScreen from "./screens/SignUp"; 
 import LoginFormPage from "./screens/LoginFormPage";
 import SongDetailScreen from "./screens/SongDetail";
 
 
 import SettingsScreen from "./screens/Settings";
+import SignUpPage from "./screens/SignUp";
  
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -69,11 +70,16 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Home" component={TabNavigator} />
+        <Stack.Screen name="Home" component={TabNavigator} />        
         <Stack.Screen name="SongDetail" component={SongDetailScreen} />
 
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} /> 
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+
+        <Stack.Screen name="Login" component={LoginScreen} /> 
+        <Stack.Screen name="LoginFormPage" component={LoginFormPage} /> 
+        <Stack.Screen name="SignUp" component={SignUpPage} /> 
+
       </Stack.Navigator>
     </NavigationContainer>
     </GestureHandlerRootView>

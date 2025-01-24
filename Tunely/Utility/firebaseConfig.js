@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword as firebaseSignInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword as firebaseSignInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
 import { getDatabase, ref, set, get, child } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
@@ -51,7 +51,6 @@ export const updateUserData = async (userId, data) => {
   }
 };
 
-// Upload profile picture to Firebase Storage
 export const uploadProfilePicture = async (userId, uri) => {
   try {
     const response = await fetch(uri);
@@ -59,11 +58,19 @@ export const uploadProfilePicture = async (userId, uri) => {
     const profilePicRef = storageRef(storage, `profilePictures/${userId}`);
     await uploadBytes(profilePicRef, blob);
     const downloadURL = await getDownloadURL(profilePicRef);
-    return downloadURL; // Return the URL of the uploaded picture
+    return downloadURL; 
   } catch (error) {
     console.error("Error uploading profile picture:", error);
   }
 };
 
+// Sign out user
+export const signOutUser = async () => {
+  try {
+    await firebaseSignOut(auth);
+  } catch (error) {
+    console.error("Error signing out:", error);
+  }
+};
 
 export default app;

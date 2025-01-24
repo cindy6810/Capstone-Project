@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook for navigation
-import { signInWithEmailAndPassword } from "../Utility/firebaseConfig"; // Ensure this path is correct
+import { useNavigation } from "@react-navigation/native"; 
+import { signInWithEmailAndPassword } from "../Utility/firebaseConfig";
 
 export default function LoginFormPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigation = useNavigation(); // Hook for navigation
+  const navigation = useNavigation(); 
 
   const handleLogin = async () => {
     try {
@@ -49,6 +49,7 @@ export default function LoginFormPage() {
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,

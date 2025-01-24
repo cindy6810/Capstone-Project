@@ -4,12 +4,7 @@ import * as ImagePicker from "expo-image-picker";
 import { styles } from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../Utility/firebaseConfig";
-import { signOut } from "firebase/auth";
-import {
-  getUserData,
-  updateUserData,
-  uploadProfilePicture,
-} from "../Utility/firebaseConfig";
+import { signOutUser, getUserData, updateUserData, uploadProfilePicture } from "../Utility/firebaseConfig";
 
 export default function ProfileScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -90,7 +85,7 @@ export default function ProfileScreen({ navigation }) {
           text: "Logout",
           onPress: async () => {
             try {
-              await signOut(auth);
+              await signOutUser(auth); 
               navigation.replace("Login");
             } catch (error) {
               console.error("Error signing out: ", error);
@@ -105,7 +100,6 @@ export default function ProfileScreen({ navigation }) {
       { cancelable: true }
     );
   };
-  
 
   return (
     <View style={styles.container}>
