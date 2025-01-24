@@ -11,8 +11,8 @@ import HomeScreen from "./screens/Home";
 import SearchScreen from "./screens/Search";
 import LibraryScreen from "./screens/Library";
 import ProfileScreen from "./screens/Profile";
-import LoginScreen from "./screens/Login"; // New Login Screen
-import SignUpScreen from "./screens/SignUp"; // New Sign-Up Screen
+import LoginScreen from "./screens/Login"; 
+import SignUpScreen from "./screens/SignUp"; 
 import LoginFormPage from "./screens/LoginFormPage";
 import SongDetailScreen from "./screens/SongDetail";
 
@@ -73,7 +73,11 @@ export default function App() {
         <Stack.Screen name="SongDetail" component={SongDetailScreen} />
 
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Settings" component={SettingsScreen} /> 
+        <Stack.Screen name="Settings" component={SettingsScreen} />
+
+        <Stack.Screen name="Login" component={LoginScreen} /> 
+        <Stack.Screen name="LoginFormPage" component={LoginFormPage} /> 
+        
       </Stack.Navigator>
     </NavigationContainer>
     </GestureHandlerRootView>
