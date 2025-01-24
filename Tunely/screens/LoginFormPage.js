@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook for navigation
-import { signInWithEmailAndPassword, signInWithGoogle } from "../Utility/firebaseConfig"; // Ensure this path is correct
+import { signInWithEmailAndPassword } from "../Utility/firebaseConfig"; // Ensure this path is correct
 
 export default function LoginFormPage() {
   const [email, setEmail] = useState("");
@@ -13,17 +13,6 @@ export default function LoginFormPage() {
       await signInWithEmailAndPassword(email, password);
       Alert.alert("Success", "Logged in successfully!");
       navigation.navigate("Home"); 
-    } catch (error) {
-      Alert.alert("Error", error.message);
-    }
-  };
-
-  const handleGoogleLogin = async () => {
-    try {
-      const user = await signInWithGoogle();
-      Alert.alert("Success", "Logged in with Google!");
-      // You can optionally pass user data if needed (e.g., user.displayName)
-      navigation.navigate("Home"); // Navigate to main screen after successful Google login
     } catch (error) {
       Alert.alert("Error", error.message);
     }
@@ -56,10 +45,6 @@ export default function LoginFormPage() {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
-        <Text style={styles.buttonText}>Log In with Google</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -70,7 +55,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#1a1a1a", // Updated background color
+    backgroundColor: "#1a1a1a", 
   },
   title: {
     fontSize: 28,
