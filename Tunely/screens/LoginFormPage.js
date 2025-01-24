@@ -12,8 +12,7 @@ export default function LoginFormPage() {
     try {
       await signInWithEmailAndPassword(email, password);
       Alert.alert("Success", "Logged in successfully!");
-      // Navigate to the main app screen after successful login
-      navigation.navigate("Home"); // Adjust this to your app's home or main page
+      navigation.navigate("Home"); 
     } catch (error) {
       Alert.alert("Error", error.message);
     }
@@ -96,14 +95,6 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#2B3595",
     fontWeight: "bold",
-  },
-  googleButton: {
-    backgroundColor: "#f1f1f1",
-    padding: 15,
-    borderRadius: 8,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 10,
   },
   backButton: {
     position: "absolute",
