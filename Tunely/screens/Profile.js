@@ -1,41 +1,53 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, Image, TouchableOpacity, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { styles } from "../styles";
 import { Ionicons } from "@expo/vector-icons";
-import { auth } from "../firebase"; // Adjust import to your Firebase config
-import { getUserData, updateUserData, uploadProfilePicture } from "../firebase"; // Import relevant functions
+import { auth } from "../Utility/firebaseConfig";
+import { signOut } from "firebase/auth";
+import { getUserData, updateUserData, uploadProfilePicture } from "../Utility/firebaseConfig";
 
 export default function ProfileScreen({ navigation }) {
   const [username, setUsername] = useState("");
   const [profilePic, setProfilePic] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch user data
+  // Request permissions for image picker
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const userId = auth.currentUser.uid; // Get the current user's ID
-        const userData = await getUserData(userId);
+    const requestPermissions = async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert("Permission denied", "We need permission to access your photos.");
+      }
+    };
 
-        if (userData) {
-          setUsername(userData.username || "User");
-          setProfilePic(userData.profilePic || null); // Use default if no picture is set
+    requestPermissions();
+
+    const fetchUserData = async () => {
+      if (auth.currentUser) {
+        try {
+          const userId = auth.currentUser.uid;
+          const userData = await getUserData(userId);
+
+          if (userData) {
+            setUsername(userData.username || "User");
+            setProfilePic(userData.profilePic || null); // Use default if no picture is set
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
         }
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-        setLoading(false);
+      } else {
+        // If no user is logged in, navigate to Login screen
+        navigation.replace("Login");
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [navigation]);
 
   // Handle profile picture change
   const changeProfilePicture = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: ImagePicker.MediaTypeOptions.Images, // Ensure media type is set to images only
       allowsEditing: true,
       aspect: [1, 1],
       quality: 0.8,
@@ -53,21 +65,25 @@ export default function ProfileScreen({ navigation }) {
       } catch (error) {
         console.error("Error changing profile picture:", error);
       }
+    } else {
+      Alert.alert("No image selected", "You didn't select an image.");
     }
   };
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" color="#f1f1f1" />
-      </View>
-    );
-  }
+  // Handle sign out
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigation.replace("Login"); // Redirect to login page after sign out
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
+  };
 
   return (
     <View style={styles.container}>
       {/* Back Button */}
-      <TouchableOpacity style={{ marginBottom: 20 }} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={{ marginBottom: 80, top: 50 }} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="#f1f1f1" />
       </TouchableOpacity>
 
@@ -82,7 +98,8 @@ export default function ProfileScreen({ navigation }) {
           borderRadius: 60,
           borderWidth: 2,
           borderColor: "#f1f1f1",
-          marginBottom: 20,
+          marginBottom: 50,
+          marginLeft: 140,
         }}
       />
 
@@ -100,7 +117,7 @@ export default function ProfileScreen({ navigation }) {
       {/* Username */}
       <Text style={styles.title}>{username}</Text>
 
-      {/* Additional Buttons */}
+      {/* Settings Button */}
       <TouchableOpacity
         style={{
           ...styles.songCard,
@@ -109,6 +126,18 @@ export default function ProfileScreen({ navigation }) {
         onPress={() => navigation.navigate("Settings")}
       >
         <Text style={styles.songTitle}>Settings</Text>
+      </TouchableOpacity>
+
+      {/* Logout Button */}
+      <TouchableOpacity
+        style={{
+          ...styles.songCard,
+          alignItems: "center",
+          marginTop: 20, // Added spacing between buttons
+        }}
+        onPress={handleLogout}
+      >
+        <Text style={styles.songTitle}>Logout</Text>
       </TouchableOpacity>
     </View>
   );
