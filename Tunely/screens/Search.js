@@ -1,5 +1,6 @@
 import React from "react";
 import { TextInput, View, FlatList, TouchableOpacity, Text } from "react-native";
+import { styles } from "../styles";
 
 export default function SearchScreen() {
   return (
