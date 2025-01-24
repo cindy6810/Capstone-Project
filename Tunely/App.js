@@ -1,4 +1,5 @@
 import React from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
@@ -13,6 +14,7 @@ import LibraryScreen from "./screens/Library";
 import ProfileScreen from "./screens/Profile";
 import LoginScreen from "./screens/Login"; // New Login Screen
 import SignUpScreen from "./screens/SignUp"; // New Sign-Up Screen
+import LoginFormPage from "./screens/LoginFormPage";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -65,7 +67,8 @@ export default function App() {
       <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="MainApp" component={TabNavigator} />
+        <Stack.Screen name="LoginFormPage" component={LoginFormPage} /> 
+        <Stack.Screen name="Home" component={TabNavigator} />
       </Stack.Navigator>
     </NavigationContainer>
   );

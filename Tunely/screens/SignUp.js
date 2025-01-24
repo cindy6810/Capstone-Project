@@ -7,11 +7,8 @@ import {
   Alert,
   StyleSheet,
 } from "react-native";
-import {
-  signUpWithEmailAndPassword,
-  signInWithGoogle,
-  signInWithFacebook,
-} from "../Utility/firebaseConfig"; // Implement these functions in firebaseConfig.js
+import { useNavigation } from "@react-navigation/native"; // Import useNavigation hook
+import { signUpWithEmailAndPassword, signInWithGoogle } from "../Utility/firebaseConfig"; // Ensure this path is correct
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -20,7 +17,10 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleSignUp = () => {
+  const navigation = useNavigation(); // Hook for navigation
+
+  const handleSignUp = async () => {
+    // Validate email and password
     if (email !== confirmEmail) {
       Alert.alert("Error", "Emails do not match!");
       return;
@@ -29,12 +29,36 @@ export default function SignUpPage() {
       Alert.alert("Error", "Passwords do not match!");
       return;
     }
-    signUpWithEmailAndPassword(email, password, username);
+
+    try {
+      await signUpWithEmailAndPassword(email, password);  
+      Alert.alert("Success", "User signed up successfully!");
+      // Navigate to login page after successful signup (optional)
+      navigation.navigate("Login");
+    } catch (error) {
+      Alert.alert("Error", error.message); 
+    }
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const user = await signInWithGoogle();
+      Alert.alert("Success", `Signed in as ${user.displayName}`);
+      // Optionally, navigate to the homepage or dashboard
+      navigation.navigate("Home");
+    } catch (error) {
+      Alert.alert("Google Sign-In Error", error.message);
+    }
   };
 
   return (
     <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Text style={styles.backButtonText}>Back</Text>
+      </TouchableOpacity>
+
       <Text style={styles.title}>Sign Up</Text>
+      
       <TextInput
         placeholder="Username"
         placeholderTextColor="#aaa"
@@ -75,17 +99,8 @@ export default function SignUpPage() {
       <TouchableOpacity style={styles.button} onPress={handleSignUp}>
         <Text style={styles.buttonText}>Sign Up</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.googleButton}
-        onPress={signInWithGoogle}
-      >
+      <TouchableOpacity style={styles.googleButton} onPress={handleGoogleSignIn}>
         <Text style={styles.buttonText}>Sign Up with Google</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.facebookButton}
-        onPress={signInWithFacebook}
-      >
-        <Text style={styles.buttonText}>Sign Up with Facebook</Text>
       </TouchableOpacity>
     </View>
   );
@@ -97,7 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
-    backgroundColor: "#2B3595", // Solid dark blue background
+    backgroundColor: "#1a1a1a", // Updated background color
   },
   title: {
     fontSize: 28,
@@ -112,7 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   button: {
-    backgroundColor: "#fff",
+    backgroundColor: "#f1f1f1",
     padding: 15,
     borderRadius: 8,
     width: "100%",
@@ -120,23 +135,26 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    color: "#E14594",
+    color: "#2B3595",
     fontWeight: "bold",
   },
   googleButton: {
-    backgroundColor: "#4285F4",
+    backgroundColor: "#f1f1f1",
     padding: 15,
     borderRadius: 8,
     width: "100%",
     alignItems: "center",
     marginBottom: 10,
   },
-  facebookButton: {
-    backgroundColor: "#3b5998",
-    padding: 15,
-    borderRadius: 8,
-    width: "100%",
-    alignItems: "center",
-    marginBottom: 10,
+  backButton: {
+    position: "absolute",
+    top: 80,
+    left: 20,
+    padding: 10,
+  },
+  backButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });

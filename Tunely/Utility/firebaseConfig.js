@@ -1,73 +1,41 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp } from 'firebase/app';
+import { getAuth, signInWithCredential, GoogleAuthProvider } from 'firebase/auth';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
-// Firebase configuration
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID,
+  apiKey: "AIzaSyDS7Ce-Rvap_8keSJ5Y3fEruwCuujShGBU",
+  authDomain: "tunely-111.firebaseapp.com",
+  databaseURL: "https://tunely-111-default-rtdb.firebaseio.com",
+  projectId: "tunely-111",
+  storageBucket: "tunely-111.firebasestorage.app",
+  messagingSenderId: "209540280192",
+  appId: "1:209540280192:web:f3e421fc788eabccdf1b65",
+  measurementId: "G-H4SETH4W1R",
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const auth = getAuth(app); // Firebase Authentication instance
+const auth = getAuth(app);
 
-// Firebase Authentication Functions
+// Configure Google Sign-In
+GoogleSignin.configure({
+  webClientId: '209540280192-cfv5dseulqeeq95t9vagrhmbt2acfva4.apps.googleusercontent.com', // Use your web client ID
+});
 
-// Sign up with email and password
-export const signUpWithEmailAndPassword = async (email, password, username) => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
-    await user.updateProfile({ displayName: username });
-    console.log("User signed up successfully:", user);
-    return user;
-  } catch (error) {
-    console.error("Error during sign-up:", error.message);
-    throw error;
-  }
-};
-
-// Log in with email and password
-export const loginWithEmailAndPassword = async (email, password) => {
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    console.log("User logged in successfully:", userCredential.user);
-    return userCredential.user;
-  } catch (error) {
-    console.error("Error during login:", error.message);
-    throw error;
-  }
-};
-
-// Sign in with Google
+// Function for Google Sign-In
 export const signInWithGoogle = async () => {
   try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    console.log("Google Sign-In Success:", result.user);
-    return result.user;
+    // Get user information from Google Sign-In
+    await GoogleSignin.hasPlayServices();
+    const userInfo = await GoogleSignin.signIn();
+    const googleCredential = GoogleAuthProvider.credential(userInfo.idToken);
+    
+    // Sign in to Firebase with the Google credential
+    const userCredential = await signInWithCredential(auth, googleCredential);
+    return userCredential.user; // Return the signed-in user
   } catch (error) {
-    console.error("Error during Google sign-in:", error.message);
-    throw error;
+    throw new Error(error.message);
   }
 };
 
-// Sign in with Facebook
-export const signInWithFacebook = async () => {
-  try {
-    const provider = new FacebookAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    console.log("Facebook Sign-In Success:", result.user);
-    return result.user;
-  } catch (error) {
-    console.error("Error during Facebook sign-in:", error.message);
-    throw error;
-  }
-};
+export default app;

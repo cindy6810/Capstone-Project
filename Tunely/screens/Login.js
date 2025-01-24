@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-} from "react-native";
+import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 export default function LoginPage() {
@@ -13,22 +7,23 @@ export default function LoginPage() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Tunely</Text>
-      <View style={styles.authOptions}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate("SignUp")}
-        >
-          <Text style={styles.buttonText}>Sign Up</Text>
-        </TouchableOpacity>
-        <Text style={styles.orText}>Oh! Already have an account?</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => Alert.alert("Redirecting to Login Form")}
-        >
-          <Text style={styles.buttonText}>Log In</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.title}>Welcome to Tunely!</Text>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("SignUp")}
+      >
+        <Text style={styles.buttonText}>Create an Account</Text>
+      </TouchableOpacity>
+
+      <Text style={styles.orText}>Oh! Already have an account?</Text>
+
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => navigation.navigate("LoginFormPage")}
+      >
+        <Text style={styles.buttonText}>Log In</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -38,17 +33,14 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#2B3595", // Solid dark blue background
+    backgroundColor: "#1a1a1a",
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 32,
     fontWeight: "bold",
     color: "#fff",
     marginBottom: 30,
-  },
-  authOptions: {
-    alignItems: "center",
-    width: "80%",
   },
   button: {
     backgroundColor: "#fff",
