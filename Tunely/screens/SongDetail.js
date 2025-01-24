@@ -17,7 +17,7 @@ export default function SongDetailScreen({ route }) {
 
   //used to swipe down to go back
   const onGestureEvent = (event) => {
-    if (event.nativeEvent.translationY > 100) {
+    if (event.nativeEvent.translationY > 50) {
       navigation.goBack();
     }
   };
