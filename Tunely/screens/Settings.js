@@ -1,20 +1,26 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { styles } from "../styles";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function SettingsScreen() {
+export default function SettingsScreen({ navigation }) {
   return (
     <View style={styles.container}>
+      {/* Back Button */}
+      <TouchableOpacity style={{ marginBottom: 20 }} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="#f1f1f1" />
+      </TouchableOpacity>
+
       <Text style={styles.title}>Settings</Text>
 
-      {/* Settings Buttons */}
+      {/* Example Setting Options */}
       <TouchableOpacity
         style={{
           ...styles.songCard,
           alignItems: "center",
         }}
       >
-        <Text style={styles.songTitle}>Change Profile Picture</Text>
+        <Text style={styles.songTitle}>Privacy Settings</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -23,7 +29,7 @@ export default function SettingsScreen() {
           alignItems: "center",
         }}
       >
-        <Text style={styles.songTitle}>Update Info</Text>
+        <Text style={styles.songTitle}>Notifications</Text>
       </TouchableOpacity>
     </View>
   );
