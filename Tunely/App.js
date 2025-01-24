@@ -18,6 +18,7 @@ import SongDetailScreen from "./screens/SongDetail";
 
 
 import SettingsScreen from "./screens/Settings";
+import SignUpPage from "./screens/SignUp";
  
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -77,7 +78,8 @@ export default function App() {
 
         <Stack.Screen name="Login" component={LoginScreen} /> 
         <Stack.Screen name="LoginFormPage" component={LoginFormPage} /> 
-        
+        <Stack.Screen name="SignUp" component={SignUpPage} /> 
+
       </Stack.Navigator>
     </NavigationContainer>
     </GestureHandlerRootView>
