@@ -27,7 +27,7 @@ function CustomTopBar({ navigation }) {
           }
         }}
       >
-        <Ionicons name="person-circle-outline" size={30} color="#E14594" />
+        <Ionicons name="pesarson-circle-outline" size={30} color="#E14594" />
       </TouchableOpacity>
     </View>
   );
