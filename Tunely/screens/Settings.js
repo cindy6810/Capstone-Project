@@ -13,7 +13,6 @@ export default function SettingsScreen({ navigation }) {
 
       <Text style={styles.title}>Settings</Text>
 
-      {/* Example Setting Options */}
       <TouchableOpacity
         style={{
           ...styles.songCard,
