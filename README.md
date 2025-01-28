@@ -8,3 +8,4 @@ You can listen to songs, like songs, comment on songs. You can save songs to pla
 As an artisit, you can Upload Songs.
 
 Authors: Malek, Nasser, Kaleb, Yassine, Vardan
+
