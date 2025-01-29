@@ -54,10 +54,6 @@ function LibraryWithTopBar({ navigation }) {
   return <ScreenWithTopBar navigation={navigation} title="Library"><LibraryScreen /></ScreenWithTopBar>;
 }
 
-function UploadWithTopBar({ navigation }) {
-  return <ScreenWithTopBar navigation={navigation} title="Upload"><UploadScreen /></ScreenWithTopBar>;
-}
-
 // Bottom tab navigator
 function TabNavigator() {
   return (
@@ -71,9 +67,7 @@ function TabNavigator() {
             iconName = focused ? "search" : "search-outline";
           } else if (route.name === "Library") {
             iconName = focused ? "library" : "library-outline";
-          } else if (route.name === "Upload") {
-            iconName = focused ? "cloud-upload" : "cloud-upload-outline";
-          }
+          } 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#f1f1f1",
@@ -85,7 +79,6 @@ function TabNavigator() {
       <Tab.Screen name="Home" component={HomeWithTopBar} />
       <Tab.Screen name="Search" component={SearchWithTopBar} />
       <Tab.Screen name="Library" component={LibraryWithTopBar} />
-      <Tab.Screen name="Upload" component={UploadWithTopBar} />
     </Tab.Navigator>
   );
 }
