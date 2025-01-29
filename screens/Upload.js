@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Alert, TextInput } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-
-import * as ImagePicker from "expo-image-picker";
+import { launchImageLibrary } from 'react-native-image-picker'; // Updated import
 import * as DocumentPicker from "expo-document-picker";
 import { styles } from "../styles";
 import { auth } from "../Utility/firebaseConfig";
@@ -15,17 +14,27 @@ export default function Upload({ navigation }) {
   const [explicit, setExplicit] = useState("clean");
   const [contributions, setContributions] = useState("");
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
+  const pickImage = () => {
+    const options = {
+      title: 'Select Song Image',
+      mediaType: 'photo', // Only allow images
       quality: 0.8,
-    });
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
 
-    if (!result.canceled) {
-      setSongImage(result.uri);
-    }
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.assets && response.assets.length > 0) {
+        const source = { uri: response.assets[0].uri };
+        setSongImage(source.uri);
+      }
+    });
   };
 
   const pickSong = async () => {
