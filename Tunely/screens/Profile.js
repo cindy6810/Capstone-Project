@@ -152,6 +152,16 @@ export default function ProfileScreen({ navigation }) {
         style={{
           ...styles.songCard,
           alignItems: "center",
+        }}
+        onPress={() => navigation.navigate("Upload")}
+      >
+        <Text style={styles.songTitle}>Upload</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={{
+          ...styles.songCard,
+          alignItems: "center",
           marginTop: 20,
         }}
         onPress={handleLogout}
