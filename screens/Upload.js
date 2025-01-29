@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, TextInput, Image } from "react-native";
+import { View, Text, TouchableOpacity, Alert, TextInput, Image, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { launchImageLibrary } from "react-native-image-picker";
 import * as DocumentPicker from "expo-document-picker";
-import { styles } from "../styles";
 import { auth } from "../Utility/firebaseConfig";
 import { uploadFile, addSongToDatabase } from "../Utility/firebaseConfig";
 import { Ionicons } from "@expo/vector-icons"; // Import icon for the back button
@@ -136,3 +135,52 @@ export default function Upload({ navigation }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  backButton: {
+    position: "absolute",
+    top: 40,
+    left: 10,
+    zIndex: 10,
+    padding: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "#f1f1f1",
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  button: {
+    backgroundColor: "#213555",
+    padding: 15,
+    borderRadius: 8,
+    alignItems: "center",
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: "#f1f1f1",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  songImagePreview: {
+    width: 150,
+    height: 150,
+    borderRadius: 8,
+    marginVertical: 10,
+  },
+  input: {
+    backgroundColor: "#2a2a2a",
+    color: "#f1f1f1",
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 10,
+    width: "100%",
+  },
+  picker: {
+    backgroundColor: "#2a2a2a",
+    color: "#f1f1f1",
+    marginBottom: 10,
+    width: "100%",
+  },
+});
