@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, TextInput } from "react-native";
+import { View, Text, TouchableOpacity, Alert, TextInput, Image } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { launchImageLibrary } from 'react-native-image-picker'; // Updated import
+import { launchImageLibrary } from "react-native-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { styles } from "../styles";
 import { auth } from "../Utility/firebaseConfig";
 import { uploadFile, addSongToDatabase } from "../Utility/firebaseConfig";
+import { Ionicons } from "@expo/vector-icons"; // Import icon for the back button
 
 export default function Upload({ navigation }) {
+  const [uploadType, setUploadType] = useState(null); // 'song' or 'album'
   const [songTitle, setSongTitle] = useState("");
   const [songImage, setSongImage] = useState(null);
   const [songFile, setSongFile] = useState(null);
@@ -15,32 +17,19 @@ export default function Upload({ navigation }) {
   const [contributions, setContributions] = useState("");
 
   const pickImage = () => {
-    const options = {
-      title: 'Select Song Image',
-      mediaType: 'photo', // Only allow images
-      quality: 0.8,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-
-    launchImageLibrary(options, (response) => {
+    launchImageLibrary({ mediaType: "photo", quality: 0.8 }, (response) => {
       if (response.didCancel) {
-        console.log('User cancelled image picker');
+        console.log("User cancelled image picker");
       } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.assets && response.assets.length > 0) {
-        const source = { uri: response.assets[0].uri };
-        setSongImage(source.uri);
+        console.log("ImagePicker Error: ", response.error);
+      } else if (response.assets?.length > 0) {
+        setSongImage(response.assets[0].uri);
       }
     });
   };
 
   const pickSong = async () => {
-    const result = await DocumentPicker.getDocumentAsync({
-      type: "audio/*",
-    });
+    const result = await DocumentPicker.getDocumentAsync({ type: "audio/*" });
 
     if (!result.canceled) {
       setSongFile(result.uri);
@@ -58,16 +47,15 @@ export default function Upload({ navigation }) {
       const imageUrl = await uploadFile(userId, songImage, "images");
       const songUrl = await uploadFile(userId, songFile, "songs");
 
-      const songData = {
+      await addSongToDatabase({
         title: songTitle,
         image: imageUrl,
         song: songUrl,
         explicit: explicit === "explicit",
         contributions: contributions.split(",").map((c) => c.trim()),
         userId,
-      };
+      });
 
-      await addSongToDatabase(songData);
       Alert.alert("Success", "Song uploaded successfully!");
       navigation.goBack();
     } catch (error) {
@@ -78,51 +66,73 @@ export default function Upload({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={{ marginBottom: 80, top: 50 }}
-        onPress={() => navigation.goBack()}
-      >
-        <Text style={styles.songTitle}>Back</Text>
+      {/* Back Button */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <Ionicons name="arrow-back" size={24} color="#fff" />
       </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Song Title"
-        value={songTitle}
-        onChangeText={setSongTitle}
-      />
+      {!uploadType ? (
+        <View style={styles.container}>
+          <Text style={styles.title}>What would you like to upload?</Text>
+          <TouchableOpacity style={styles.button} onPress={() => setUploadType("song")}>
+            <Text style={styles.buttonText}>Upload a Song</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={() => setUploadType("album")}>
+            <Text style={styles.buttonText}>Upload an Album</Text>
+          </TouchableOpacity>
+        </View>
+      ) : uploadType === "song" ? (
+        <View style={styles.container}>
+          <TouchableOpacity style={styles.button} onPress={pickSong}>
+            <Text style={styles.buttonText}>Upload Song File</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={styles.songCard} onPress={pickImage}>
-        <Text style={styles.songTitle}>Pick Song Image</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={pickImage}>
+            <Text style={styles.buttonText}>Upload Picture</Text>
+          </TouchableOpacity>
 
-      <TouchableOpacity style={styles.songCard} onPress={pickSong}>
-        <Text style={styles.songTitle}>Pick Song File</Text>
-      </TouchableOpacity>
+          {songImage && <Image source={{ uri: songImage }} style={styles.songImagePreview} />}
 
-      <Picker
-        selectedValue={explicit}
-        style={styles.picker}
-        onValueChange={(itemValue) => setExplicit(itemValue)}
-      >
-        <Picker.Item label="Clean" value="clean" />
-        <Picker.Item label="Explicit" value="explicit" />
-      </Picker>
+          <TextInput
+            style={styles.input}
+            placeholder="Name of the Song"
+            placeholderTextColor="#aaa"
+            value={songTitle}
+            onChangeText={setSongTitle}
+          />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Contributions (comma separated)"
-        value={contributions}
-        onChangeText={setContributions}
-      />
+          <Picker selectedValue={explicit} style={styles.picker} onValueChange={setExplicit}>
+            <Picker.Item label="Clean" value="clean" />
+            <Picker.Item label="Explicit" value="explicit" />
+          </Picker>
 
-      <TouchableOpacity style={styles.songCard} onPress={handleUpload}>
-        <Text style={styles.songTitle}>Upload Song</Text>
-      </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Contributions (comma separated)"
+            placeholderTextColor="#aaa"
+            value={contributions}
+            onChangeText={setContributions}
+          />
 
-      <TouchableOpacity style={styles.songCard} onPress={() => Alert.alert("Info", "Schedule upload feature coming soon!")}>
-        <Text style={styles.songTitle}>Schedule Upload</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={handleUpload}>
+            <Text style={styles.buttonText}>Upload</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => Alert.alert("Info", "Schedule upload feature coming soon!")}
+          >
+            <Text style={styles.buttonText}>Schedule Upload</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={styles.container}>
+          <Text style={styles.title}>Upload Album (Coming Soon)</Text>
+          <TouchableOpacity style={styles.button} onPress={() => setUploadType(null)}>
+            <Text style={styles.buttonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
