@@ -13,21 +13,22 @@ import HomeScreen from "./screens/Home";
 import SearchScreen from "./screens/Search";
 import LibraryScreen from "./screens/Library";
 import ProfileScreen from "./screens/Profile";
-import LoginScreen from "./screens/Login"; 
-import SignUpScreen from "./screens/SignUp"; 
+import LoginScreen from "./screens/Login";
+import SignUpScreen from "./screens/SignUp";
 import LoginFormPage from "./screens/LoginFormPage";
 import SongDetailScreen from "./screens/SongDetail";
 import SettingsScreen from "./screens/Settings";
-import UploadScreen from "./screens/Upload"; 
+import UploadScreen from "./screens/Upload";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function HomeWithTopBar({ navigation }) {
+// Reusable top bar component
+function ScreenWithTopBar({ navigation, children, title }) {
   return (
     <View style={{ flex: 1 }}>
       <View style={styles.topBar}>
-        <Text style={styles.title}>Tunely</Text>
+        <Text style={styles.title}>{title}</Text>
         <TouchableOpacity
           style={styles.profileButton}
           onPress={() => navigation.navigate("Profile")}
@@ -35,11 +36,29 @@ function HomeWithTopBar({ navigation }) {
           <Ionicons name="person-circle-outline" size={30} color="#f1f1f1" />
         </TouchableOpacity>
       </View>
-      <HomeScreen />
+      {children}
     </View>
   );
 }
 
+// Wrapping each screen with the top bar
+function HomeWithTopBar({ navigation }) {
+  return <ScreenWithTopBar navigation={navigation} title="Tunely"><HomeScreen /></ScreenWithTopBar>;
+}
+
+function SearchWithTopBar({ navigation }) {
+  return <ScreenWithTopBar navigation={navigation} title="Search"><SearchScreen /></ScreenWithTopBar>;
+}
+
+function LibraryWithTopBar({ navigation }) {
+  return <ScreenWithTopBar navigation={navigation} title="Library"><LibraryScreen /></ScreenWithTopBar>;
+}
+
+function UploadWithTopBar({ navigation }) {
+  return <ScreenWithTopBar navigation={navigation} title="Upload"><UploadScreen /></ScreenWithTopBar>;
+}
+
+// Bottom tab navigator
 function TabNavigator() {
   return (
     <Tab.Navigator
@@ -64,13 +83,14 @@ function TabNavigator() {
       })}
     >
       <Tab.Screen name="Home" component={HomeWithTopBar} />
-      <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Library" component={LibraryScreen} />
-      <Tab.Screen name="Upload" component={UploadScreen} />
+      <Tab.Screen name="Search" component={SearchWithTopBar} />
+      <Tab.Screen name="Library" component={LibraryWithTopBar} />
+      <Tab.Screen name="Upload" component={UploadWithTopBar} />
     </Tab.Navigator>
   );
 }
 
+// Main App component
 export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -83,7 +103,7 @@ export default function App() {
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="LoginFormPage" component={LoginFormPage} />
           <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Upload" component={UploadScreen} /> 
+          <Stack.Screen name="Upload" component={UploadScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </GestureHandlerRootView>
