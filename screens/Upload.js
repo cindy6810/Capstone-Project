@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, TouchableOpacity, Alert, TextInput, Picker } from "react-native";
+import { View, Text, TouchableOpacity, Alert, TextInput } from "react-native";
+import { Picker } from "@react-native-picker/picker";
+
 import * as ImagePicker from "expo-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { styles } from "../styles";
