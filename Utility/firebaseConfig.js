@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword as firebaseSignInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
 import { getDatabase, ref, set, get, child } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { doc, setDoc, getFirestore } from 'firebase/firestore'; // Import Firestore functions
 
 const firebaseConfig = {
   apiKey: "AIzaSyDS7Ce-Rvap_8keSJ5Y3fEruwCuujShGBU",
@@ -19,6 +20,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 const storage = getStorage(app);
+const firestore = getFirestore(app); // Initialize Firestore
 
 // Sign up with email and password
 export const signUpWithEmailAndPassword = (email, password) => {
@@ -51,6 +53,7 @@ export const updateUserData = async (userId, data) => {
   }
 };
 
+// Upload profile picture to Firebase Storage
 export const uploadProfilePicture = async (userId, uri) => {
   try {
     const response = await fetch(uri);
@@ -58,9 +61,33 @@ export const uploadProfilePicture = async (userId, uri) => {
     const profilePicRef = storageRef(storage, `profilePictures/${userId}`);
     await uploadBytes(profilePicRef, blob);
     const downloadURL = await getDownloadURL(profilePicRef);
-    return downloadURL; 
+    return downloadURL;
   } catch (error) {
     console.error("Error uploading profile picture:", error);
+  }
+};
+
+// Upload any file (image or song) to Firebase Storage
+export const uploadFile = async (userId, fileUri, type) => {
+  try {
+    const response = await fetch(fileUri);
+    const blob = await response.blob();
+    const fileRef = storageRef(storage, `${type}/${userId}/${Date.now()}`);
+    await uploadBytes(fileRef, blob);
+    const downloadURL = await getDownloadURL(fileRef);
+    return downloadURL;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
+};
+
+// Add song data to Firestore
+export const addSongToDatabase = async (songData) => {
+  try {
+    const songRef = doc(firestore, 'songs', `${songData.userId}_${Date.now()}`);
+    await setDoc(songRef, songData);
+  } catch (error) {
+    console.error("Error adding song to database:", error);
   }
 };
 
