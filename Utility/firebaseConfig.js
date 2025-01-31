@@ -3,6 +3,8 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword as 
 import { getDatabase, ref, set, get, child } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, setDoc, getFirestore } from 'firebase/firestore'; 
+export { auth, database, storage, firestore };
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyDS7Ce-Rvap_8keSJ5Y3fEruwCuujShGBU",
