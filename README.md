@@ -18,3 +18,6 @@ A sleek and modern music app built with **React Native** and **Expo**, featuring
 - **React Navigation** for smooth navigation  
 - **Firebase** (or your preferred backend) for authentication & storage  
 - **Gesture Handler** for fluid interactions  
+
+## Authors
+- 
