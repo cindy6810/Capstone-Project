@@ -22,3 +22,5 @@ A sleek and modern music app built with **React Native** and **Expo**, featuring
 ## Authors
 - Malek Mansour
 - Nasser Nasser
+- Kaleb Berhane
+- Vardan Jaswal
