@@ -20,4 +20,4 @@ A sleek and modern music app built with **React Native** and **Expo**, featuring
 - **Gesture Handler** for fluid interactions  
 
 ## Authors
-- 
+- Malek Mansour
