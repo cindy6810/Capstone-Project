@@ -24,3 +24,5 @@ A sleek and modern music app built with **React Native** and **Expo**, featuring
 - Nasser Nasser
 - Kaleb Berhane
 - Vardan Jaswal
+- Yassine Ghannay
+- Yaling Wei
