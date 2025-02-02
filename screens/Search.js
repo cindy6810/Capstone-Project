@@ -10,7 +10,7 @@ export default function SearchScreen() {
         placeholder="Search song, artist, album..."
         placeholderTextColor="#E14594"
       />
-      {/* Search results */}
+      
       <FlatList
         data={[
           { id: "1", title: "Search Result 1" },
