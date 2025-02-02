@@ -8,7 +8,7 @@ import { uploadFile, addSongToDatabase } from "../Utility/firebaseConfig";
 import { Ionicons } from "@expo/vector-icons"; // Import icon for the back button
 
 export default function Upload({ navigation }) {
-  const [uploadType, setUploadType] = useState(null); // 'song' or 'album'
+  const [uploadType, setUploadType] = useState(null); 
   const [songTitle, setSongTitle] = useState("");
   const [songImage, setSongImage] = useState(null);
   const [songFile, setSongFile] = useState(null);
