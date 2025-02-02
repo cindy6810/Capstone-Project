@@ -5,7 +5,6 @@ import { styles } from "../styles";
 export default function SearchScreen() {
   return (
     <View style={styles.container}>
-      {/* Search bar */}
       <TextInput
         style={styles.searchBar}
         placeholder="Search song, artist, album..."
