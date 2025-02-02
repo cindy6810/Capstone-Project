@@ -20,7 +20,6 @@ export default function SignUpPage() {
   const navigation = useNavigation(); 
 
   const handleSignUp = async () => {
-    // Validate email and password
     if (email !== confirmEmail) {
       Alert.alert("Error", "Emails do not match!");
       return;
