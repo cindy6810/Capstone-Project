@@ -41,7 +41,6 @@ function ScreenWithTopBar({ navigation, children, title }) {
   );
 }
 
-// Wrapping each screen with the top bar
 function HomeWithTopBar({ navigation }) {
   return <ScreenWithTopBar navigation={navigation} title="Tunely"><HomeScreen /></ScreenWithTopBar>;
 }
