@@ -19,6 +19,9 @@ import LoginFormPage from "./screens/LoginFormPage";
 import SongDetailScreen from "./screens/SongDetail";
 import SettingsScreen from "./screens/Settings";
 import UploadScreen from "./screens/Upload";
+import PlaylistDetail from './screens/PlaylistDetail';
+import UserPlayList from './screens/UserPlayList';
+import PlayListButton from "./components/PlayListButton";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -53,6 +56,45 @@ function LibraryWithTopBar({ navigation }) {
   return <ScreenWithTopBar navigation={navigation} title="Library"><LibraryScreen /></ScreenWithTopBar>;
 }
 
+function UserPlayListWithTopBar({ navigation }) {
+  return (
+    <ScreenWithTopBar navigation={navigation} title="Playlists">
+      <View style={styles.container}>
+      <PlayListButton title="Playlists" />
+      <UserPlayList />
+      </View>
+    </ScreenWithTopBar>
+  );
+}
+
+//stack for home screen
+function HomeStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomeScreen" component={HomeWithTopBar} />
+      <Stack.Screen name="PlaylistDetail" component={PlaylistDetail} />
+    </Stack.Navigator>
+  );
+}
+
+//stack for library screen
+function LibraryStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="LibraryScreen" component={LibraryWithTopBar} />
+      <Stack.Screen 
+        name="UserPlayList" 
+        component={UserPlayListWithTopBar}
+        options={{
+          presentation: 'card',
+          animationEnabled: true
+        }}
+      />
+      <Stack.Screen name="PlaylistDetail" component={PlaylistDetail} />
+    </Stack.Navigator>
+  );
+}
+
 // Bottom tab navigator
 function TabNavigator() {
   return (
@@ -75,9 +117,9 @@ function TabNavigator() {
         headerShown: false,
       })}
     >
-      <Tab.Screen name="Home" component={HomeWithTopBar} />
+      <Tab.Screen name="Home" component={HomeStack} />
       <Tab.Screen name="Search" component={SearchWithTopBar} />
-      <Tab.Screen name="Library" component={LibraryWithTopBar} />
+      <Tab.Screen name="Library" component={LibraryStack} />
     </Tab.Navigator>
   );
 }

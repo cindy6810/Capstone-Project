@@ -31,6 +31,11 @@ export const styles = StyleSheet.create({
     color: "#f1f1f1", 
     fontWeight: "bold",
   },
+  //when using safeareaview for iphone notch
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#1a1a1a",
+  },
   // Top bar styles
   topBar: {
     flexDirection: "row",
@@ -166,5 +171,31 @@ export const styles = StyleSheet.create({
     color: "#fff",
     textAlign: "center",
   },
+
+  fabButton: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20,
+    backgroundColor: '#fff',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 25,
+    flexDirection: 'row',
+    alignItems: 'center',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  fabButtonText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  }
 
 });
