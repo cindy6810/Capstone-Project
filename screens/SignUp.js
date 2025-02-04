@@ -20,7 +20,6 @@ export default function SignUpPage() {
   const navigation = useNavigation(); 
 
   const handleSignUp = async () => {
-    // Validate email and password
     if (email !== confirmEmail) {
       Alert.alert("Error", "Emails do not match!");
       return;
@@ -33,7 +32,6 @@ export default function SignUpPage() {
     try {
       await signUpWithEmailAndPassword(email, password);  
       Alert.alert("Success", "User signed up successfully!");
-      // Navigate to login page after successful signup 
       navigation.navigate("Login");
     } catch (error) {
       Alert.alert("Error", error.message); 

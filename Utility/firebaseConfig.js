@@ -2,25 +2,36 @@ import { initializeApp } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword as firebaseSignInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
 import { getDatabase, ref, set, get, child } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, setDoc, getFirestore } from 'firebase/firestore'; // Import Firestore functions
+import { doc, setDoc, getFirestore } from 'firebase/firestore'; 
+export { auth, database, storage, firestore };
+import { FIREBASE_API_KEY, 
+  FIREBASE_AUTH_DOMAIN, 
+  FIREBASE_DATABASE_URL, FIREBASE_PROJECT_ID, 
+  FIREBASE_STORAGE_BUCKET, 
+  FIREBASE_MESSAGING_SENDER_ID, 
+  FIREBASE_APP_ID, 
+  FIREBASE_MEASUREMENT_ID } from '@env';
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDS7Ce-Rvap_8keSJ5Y3fEruwCuujShGBU",
-  authDomain: "tunely-111.firebaseapp.com",
-  databaseURL: "https://tunely-111-default-rtdb.firebaseio.com",
-  projectId: "tunely-111",
-  storageBucket: "tunely-111.firebasestorage.app",
-  messagingSenderId: "209540280192",
-  appId: "1:209540280192:web:f3e421fc788eabccdf1b65",
-  measurementId: "G-H4SETH4W1R",
-};
+
+  const firebaseConfig = {
+    apiKey: FIREBASE_API_KEY,
+    authDomain: FIREBASE_AUTH_DOMAIN,
+    databaseURL: FIREBASE_DATABASE_URL,
+    projectId: FIREBASE_PROJECT_ID,
+    storageBucket: FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
+    appId: FIREBASE_APP_ID,
+    measurementId: FIREBASE_MEASUREMENT_ID,
+  };
+
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const database = getDatabase(app);
 const storage = getStorage(app);
-const firestore = getFirestore(app); // Initialize Firestore
+const firestore = getFirestore(app); 
 
 // Sign up with email and password
 export const signUpWithEmailAndPassword = (email, password) => {
@@ -101,3 +112,6 @@ export const signOutUser = async () => {
 };
 
 export default app;
+
+
+// Firebase Might Get Scraped and replaced with AWS Database

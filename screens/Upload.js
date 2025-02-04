@@ -5,10 +5,10 @@ import { launchImageLibrary } from "react-native-image-picker";
 import * as DocumentPicker from "expo-document-picker";
 import { auth } from "../Utility/firebaseConfig";
 import { uploadFile, addSongToDatabase } from "../Utility/firebaseConfig";
-import { Ionicons } from "@expo/vector-icons"; // Import icon for the back button
+import { Ionicons } from "@expo/vector-icons"; 
 
 export default function Upload({ navigation }) {
-  const [uploadType, setUploadType] = useState(null); // 'song' or 'album'
+  const [uploadType, setUploadType] = useState(null); 
   const [songTitle, setSongTitle] = useState("");
   const [songImage, setSongImage] = useState(null);
   const [songFile, setSongFile] = useState(null);

@@ -1,10 +1,28 @@
-# Tunely
-Welcome to our Capstone Project! E-Devs present to you: Tunely!
+# Tunely 🎵  
+A sleek and modern music app built with **React Native** and **Expo**, featuring:  
+✅ **Home, Search, Library, and Upload pages**  
+✅ **Persistent top navigation bar**  
+✅ **Bottom tab navigation**  
+✅ **User authentication (Login & Signup)**  
+✅ **Music uploading & library management**  
 
-App Name: Tunely
+## 🚀 Features  
+- 🎧 **Music Streaming:** Browse and play songs from your library  
+- 🔍 **Search:** Find tracks and artists easily  
+- 📂 **Library Management:** Organize your favorite music  
+- ☁ **Upload Functionality:** Add your own tracks  
+- 👤 **User Profiles:** Manage personal settings  
 
-Description: Listen to Music, Make playlists, Interact with Music Artists.
-You can listen to songs, like songs, comment on songs. You can save songs to playlists.
-As an artisit, you can Upload Songs.
+## 🛠 Tech Stack  
+- **React Native** with Expo  
+- **React Navigation** for smooth navigation  
+- **Firebase** (or your preferred backend) for authentication & storage  
+- **Gesture Handler** for fluid interactions  
 
-Authors: Malek, Nasser, Kaleb, Yassine, Vardan
+## Authors
+- Malek Mansour
+- Nasser Nasser
+- Kaleb Berhane
+- Vardan Jaswal
+- Yassine Ghannay
+- Yaling Wei
