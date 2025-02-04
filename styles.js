@@ -8,11 +8,19 @@ export const styles = StyleSheet.create({
     padding: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: "bold",
     color: "#f1f1f1", 
-    marginBottom: 20,
   },
+
+  subtitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color:"#f1f1f1",
+  },
+
+
   songCard: {
     backgroundColor: "#182952", // Purple for song cards
     padding: 15,
@@ -28,13 +36,12 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#213555", 
-    padding: 10,
+    backgroundColor: "#1a1a1a", 
+    padding: 15,
     paddingTop: 40, // For status bar spacing
   },
   profileButton: {
     padding: 2,
-    marginTop: 30,
   },
   searchBar: {
     backgroundColor: "#f1f1f1", // Purple for search bar
@@ -75,7 +82,9 @@ export const styles = StyleSheet.create({
     width: "80%",
   },
   imageTitleContainer: {
-    alignItems: "flex-start",
+    alignItems: "center",
+    marginVertical: 20,
+    width: "80%",
   },
   sliderContainer: {
     width: "80%",
@@ -102,4 +111,60 @@ export const styles = StyleSheet.create({
   timeText: {
     color: "#fff",
   },
+  //Song Card Styles
+  songCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 5,
+    marginVertical: 2,
+    backgroundColor: "transparent",
+    borderRadius: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+
+  
+  songCardImage: {
+    width: 40,
+    height: 40,
+    marginRight: 10,
+  },
+  songCardInfo: {
+    flex: 1,
+  },
+  songCardTitle: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#666"
+  },
+  songCardArtist: {
+    fontSize: 12,
+    color: "#666",
+  },
+
+  songCard2: {
+    marginVertical: 5,
+    marginRight: 10,
+    borderRadius: 5,
+    overflow: "hidden",
+  },
+  songCard2Image: {
+    width: 150,
+    height: 150,
+    justifyContent: "flex-end",
+  },
+  songCard2TitleContainer: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: 2,
+  },
+  songCard2Title: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#fff",
+    textAlign: "center",
+  },
+
 });

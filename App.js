@@ -89,7 +89,14 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Home" component={TabNavigator} />
-          <Stack.Screen name="SongDetail" component={SongDetailScreen} />
+          <Stack.Screen 
+            name="SongDetail" 
+            component={SongDetailScreen} 
+            options={{ 
+              presentation: 'modal', 
+              cardStyle: { backgroundColor: 'transparent' } 
+            }} 
+          />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
