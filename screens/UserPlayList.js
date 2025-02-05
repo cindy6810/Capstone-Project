@@ -13,7 +13,6 @@ export default function UserPlayList() {
   ];
 
   const handleCreatePlaylist = () => {
-    // Handle new playlist creation
   };
 
   return (
