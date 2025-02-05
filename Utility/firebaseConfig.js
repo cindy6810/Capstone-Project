@@ -112,6 +112,3 @@ export const signOutUser = async () => {
 };
 
 export default app;
-
-
-// Firebase Might Get Scraped and replaced with AWS Database
