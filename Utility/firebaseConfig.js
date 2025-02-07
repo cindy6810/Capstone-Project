@@ -25,7 +25,6 @@ import { FIREBASE_API_KEY,
   };
 
 
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
