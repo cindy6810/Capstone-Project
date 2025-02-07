@@ -17,7 +17,7 @@ app.use(cors({
 app.use(bodyParser.json());
 
 // Create Account Endpoint
-app.post("/create-account", async (req, res) => { // Move 'async' before (req, res)
+app.post("/create-account", async (req, res) => { 
   const { name, email, password, confirmPassword } = req.body;
 
   if (!name || !email || !password || !confirmPassword) {
@@ -35,7 +35,6 @@ app.post("/create-account", async (req, res) => { // Move 'async' before (req, r
   
     // Check if user exists in the database
     if (existingUser && existingUser.length > 0) {
-      // Custom message for existing user
       return res.status(400).json({ message: "Account already exists. Please log in." });
     }
   
