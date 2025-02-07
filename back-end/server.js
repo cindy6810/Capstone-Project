@@ -12,7 +12,7 @@ const app = express();
 const port = 3005;
 
 app.use(cors({
-  origin: '*' // Replace '*' with specific origin if needed (e.g., 'http://localhost:19006' for Expo)
+  origin: '*' 
 }));
 app.use(bodyParser.json());
 
