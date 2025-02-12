@@ -81,6 +81,13 @@ export const styles = StyleSheet.create({
     height: 350,
     marginVertical: 20,
   },
+  songArtist: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 4,
+    textAlign: "left",
+    alignSelf: "flex-start",
+  },
   controls: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -116,6 +123,20 @@ export const styles = StyleSheet.create({
   timeText: {
     color: "#fff",
   },
+  commentButton: {
+    backgroundColor: '#007AFF',
+    padding: 15,
+    borderRadius: 25,
+    marginHorizontal: 20,
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  commentButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  
   //Song Card Styles
   songCard: {
     flexDirection: "row",

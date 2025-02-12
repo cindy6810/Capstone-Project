@@ -1,17 +1,22 @@
 import React, { useState, useRef } from "react";
-import { View, Text, Image, Animated, StyleSheet } from "react-native";
+import { View, Text, Image, Animated, StyleSheet, TouchableOpacity} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
+import { styles } from "../styles";
 
 import Scrubber from "../components/Scrubber";
 import PlayPauseButton from "../components/PlayPauseButton";
 import SkipButton from "../components/SkipButton";
-import { styles } from "../styles";
+import CommentScreen from "./CommentScreen";
 
 export default function SongDetailScreen({ route }) {
   const { song } = route.params;
   const navigation = useNavigation();
   const [sliderValue, setSliderValue] = useState(0);
+
+  const handleCommentPress = () => {
+    navigation.navigate('CommentScreen', { song });
+  };
 
   const translateY = useRef(new Animated.Value(0)).current;
   const scale = translateY.interpolate({
@@ -48,6 +53,7 @@ export default function SongDetailScreen({ route }) {
         <View style={styles.imageTitleContainer}>
         <Animated.Image source={song.image} style={[styles.songImage, { transform: [{ scale }] }]} />
           <Text style={styles.songTitle}>{song.title}</Text>
+          <Text style={styles.songArtist}>{song.artist}</Text>
         </View>
         <Scrubber />
         <View style={styles.controls}>
@@ -55,6 +61,12 @@ export default function SongDetailScreen({ route }) {
           <PlayPauseButton onPress={() => {}} />
           <SkipButton direction="forward" onPress={() => {}} />
         </View>
+        <TouchableOpacity 
+          style={styles.commentButton}
+          onPress={handleCommentPress}
+        >
+          <Text style={styles.commentButtonText}>Comments</Text>
+        </TouchableOpacity>
       </Animated.View>
     </PanGestureHandler>
   );

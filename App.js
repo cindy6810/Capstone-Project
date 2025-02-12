@@ -22,6 +22,7 @@ import UploadScreen from "./screens/Upload";
 import PlaylistDetail from './screens/PlaylistDetail';
 import UserPlayList from './screens/UserPlayList';
 import PlayListButton from "./components/PlayListButton";
+import CommentScreen from "./screens/CommentScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -139,6 +140,14 @@ export default function App() {
               cardStyle: { backgroundColor: 'transparent' } 
             }} 
           />
+          <Stack.Screen 
+          name="CommentScreen" 
+          component={CommentScreen} 
+          options={{ 
+            presentation: 'modal',
+            headerShown: false 
+          }}
+        />
           <Stack.Screen name="Profile" component={ProfileScreen} />
           <Stack.Screen name="Settings" component={SettingsScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />

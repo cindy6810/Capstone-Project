@@ -15,14 +15,6 @@ const PlaylistDetail = () => {
     { id: "2", title: "Song 2", artist: "Artist 2", image: require("../assets/graduation.jpg") },
     { id: "3", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
     { id: "4", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "5", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "6", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "7", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "8", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "9", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "10 ", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "11", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "12", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
   ];
 
   const handleAddSong = () => {
