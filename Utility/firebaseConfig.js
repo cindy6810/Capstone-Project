@@ -3,7 +3,6 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword as 
 import { getDatabase, ref, set, get, child } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, setDoc, getFirestore } from 'firebase/firestore'; 
-export { auth, database, storage, firestore };
 import { FIREBASE_API_KEY, 
   FIREBASE_AUTH_DOMAIN, 
   FIREBASE_DATABASE_URL, FIREBASE_PROJECT_ID, 
@@ -11,6 +10,8 @@ import { FIREBASE_API_KEY,
   FIREBASE_MESSAGING_SENDER_ID, 
   FIREBASE_APP_ID, 
   FIREBASE_MEASUREMENT_ID } from '@env';
+
+  export { auth, database, storage, firestore };
 
 
   const firebaseConfig = {
