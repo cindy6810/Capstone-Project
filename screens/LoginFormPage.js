@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native"; 
 import { signInWithEmailAndPassword } from "../Utility/firebaseConfig";
+import GoogleButton from '../components/GoogleButton';
 
 export default function LoginFormPage() {
   const [email, setEmail] = useState("");
@@ -16,6 +17,13 @@ export default function LoginFormPage() {
     } catch (error) {
       Alert.alert("Error", error.message);
     }
+  };
+
+  const handleGoogleSignIn = (userInfo) => {
+    console.log('User info:', userInfo);
+    // Handle user info after successful sign-in
+    Alert.alert("Success", "Logged in with Google successfully!");
+    navigation.navigate("Home");
   };
 
   return (
@@ -45,6 +53,10 @@ export default function LoginFormPage() {
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
+
+      <Text style={styles.orText}>Or</Text>
+
+      <GoogleButton onSignIn={handleGoogleSignIn} />
     </View>
   );
 }
@@ -92,5 +104,10 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  orText: {
+    color: 'rgba(255,255,255,0.7)',
+    marginVertical: 10,
+    fontSize: 16,
   },
 });
