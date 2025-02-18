@@ -11,7 +11,6 @@ import { FIREBASE_API_KEY,
   FIREBASE_APP_ID, 
   FIREBASE_MEASUREMENT_ID } from '@env';
 
-  export { auth, database, storage, firestore };
 
 
   const firebaseConfig = {
@@ -32,6 +31,8 @@ const auth = getAuth(app);
 const database = getDatabase(app);
 const storage = getStorage(app);
 const firestore = getFirestore(app); 
+
+export { auth, database, storage, firestore };
 
 // Sign up with email and password
 export const signUpWithEmailAndPassword = (email, password) => {
