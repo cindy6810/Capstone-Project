@@ -50,6 +50,7 @@ export default function LibraryScreen() {
   );
 }
 
+// Styles
 const libraryStyles = StyleSheet.create({
   button: {
     backgroundColor: "rgba(42, 42, 42, 0.7)",
