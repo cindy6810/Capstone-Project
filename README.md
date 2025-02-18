@@ -13,7 +13,7 @@ A sleek and modern music app built with **React Native** and **Expo**, featuring
 - ☁ **Upload Functionality:** Add your own tracks  
 - 👤 **User Profiles:** Manage personal settings  
 
-## 🛠 Tech Stack  
+## Tech Stack  
 - **React Native** with Expo  
 - **React Navigation** for smooth navigation  
 - **Firebase** for authentication 
