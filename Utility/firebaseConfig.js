@@ -32,7 +32,6 @@ const database = getDatabase(app);
 const storage = getStorage(app);
 const firestore = getFirestore(app); 
 
-export { auth, database, storage, firestore };
 
 // Sign up with email and password
 export const signUpWithEmailAndPassword = (email, password) => {
@@ -112,4 +111,5 @@ export const signOutUser = async () => {
   }
 };
 
+export { auth, database, storage, firestore };
 export default app;
