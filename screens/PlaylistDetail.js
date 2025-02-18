@@ -49,6 +49,7 @@ const PlaylistDetail = () => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
 
   container: {
