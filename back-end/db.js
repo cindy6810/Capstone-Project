@@ -1,32 +1,22 @@
 const mysql = require('mysql2/promise');
+const dbConfig = require('./config/db-config');
 
-// Create the connection pool
-const pool = mysql.createPool({
-  host: "tunely-db.c5usqgcyg57d.ca-central-1.rds.amazonaws.com",
-  user: "admin",
-  password: "BlueSky2025!",
-  database: "tunely-db",
-  connectionLimit: 10 
-});
+const pool = mysql.createPool(dbConfig);
 
 const db = {
-  
   query: async (sql, params) => {
     let connection;
     try {
-      connection = await pool.getConnection(); // Get a connection from the pool
-      const [results] = await connection.execute(sql, params); // Execute the query
-      return results; // Return the query results
+      connection = await pool.getConnection();
+      const [results] = await connection.execute(sql, params);
+      return results;
     } catch (err) {
-      console.error('Error during query execution:', err); // Log any error that occurs
-      throw err; // Rethrow error for further handling if needed
+      console.error('Database Error:', err);
+      throw err;
     } finally {
-      if (connection) {
-        connection.release(); // Always release the connection back to the pool
-      }
+      if (connection) connection.release();
     }
   }
 };
 
 module.exports = db;
-// export
