@@ -136,16 +136,29 @@ export default function App() {
             name="SongDetail" 
             component={SongDetailScreen} 
             options={{ 
-              presentation: 'modal', 
-              cardStyle: { backgroundColor: 'transparent' } 
+              presentation: 'transparentModal', 
             }} 
           />
           <Stack.Screen 
           name="CommentScreen" 
           component={CommentScreen} 
           options={{ 
-            presentation: 'modal',
-            headerShown: false 
+            presentation: 'transparentModal',
+            headerShown: false,
+            animation: 'default',
+            cardOverlayEnabled: true,  
+            animationEnabled: true,   
+            cardStyleInterpolator: ({ current: { progress } }) => ({
+              cardStyle: {
+                opacity: progress,
+              },
+              overlayStyle: {
+                opacity: progress.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: [0, 0.5],
+                }),
+              },
+            }),
           }}
         />
           <Stack.Screen name="Profile" component={ProfileScreen} />
