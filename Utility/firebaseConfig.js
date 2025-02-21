@@ -1,5 +1,7 @@
 import { initializeApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword as firebaseSignInWithEmailAndPassword, signOut as firebaseSignOut } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword,
+  signInWithEmailAndPassword as firebaseSignInWithEmailAndPassword, 
+  signOut as firebaseSignOut } from 'firebase/auth';
 import { getDatabase, ref, set, get, child } from 'firebase/database';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { doc, setDoc, getFirestore } from 'firebase/firestore'; 

@@ -23,6 +23,7 @@ import PlaylistDetail from './screens/PlaylistDetail';
 import UserPlayList from './screens/UserPlayList';
 import PlayListButton from "./components/PlayListButton";
 import CommentScreen from "./screens/CommentScreen";
+import TopBarProfileIcon from './components/TopBarProfileIcon';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -37,7 +38,7 @@ function ScreenWithTopBar({ navigation, children, title }) {
           style={styles.profileButton}
           onPress={() => navigation.navigate("Profile")}
         >
-          <Ionicons name="person-circle-outline" size={30} color="#f1f1f1" />
+          <TopBarProfileIcon size={30} />
         </TouchableOpacity>
       </View>
       {children}

@@ -12,8 +12,12 @@ const GoogleButton = ({ onSignIn }) => {
     }
     try {
       const userInfo = await signInWithGoogle();
-      if (onSignIn) {
-        onSignIn(userInfo);
+      if (userInfo && userInfo.id) { 
+        if (onSignIn) {
+          onSignIn(userInfo);
+        }
+      } else {
+        throw new Error('Invalid user data received');
       }
     } catch (error) {
       console.error('Google Sign-In error', error);

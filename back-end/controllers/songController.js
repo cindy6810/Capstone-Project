@@ -13,7 +13,7 @@ const songController = {
       const songData = {
         title: req.body.title || req.file.originalname.split('.')[0],
         artistName: req.body.artistName || 'Unknown Artist',
-        genre: req.body.genre || 'Unknown Genre', // Added genre
+        genre: req.body.genre || 'Unknown Genre', 
         duration: req.body.duration || 0,
         fileUrl
       };

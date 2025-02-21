@@ -5,10 +5,14 @@ import { styles } from "../styles";
 import { Ionicons } from "@expo/vector-icons";
 import { auth } from "../Utility/firebaseConfig";
 import { signOutUser, getUserData, updateUserData, uploadProfilePicture } from "../Utility/firebaseConfig";
+import { getCurrentUser, signOut as googleSignOut } from '../Utility/googleAuth';
+import blankProfilePic from '../assets/blank_profile.png';
+import { useUserData } from '../hooks/useUserData';
+
 
 export default function ProfileScreen({ navigation }) {
-  const [username, setUsername] = useState("");
-  const [profilePic, setProfilePic] = useState(null);
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
+  const { username, profilePic, isLoading } = useUserData();
 
   useEffect(() => {
     // Request media library permissions
@@ -22,33 +26,14 @@ export default function ProfileScreen({ navigation }) {
         );
       }
     };
-
-    // Fetch user data
-    const fetchUserData = async () => {
-      if (auth.currentUser) {
-        try {
-          const userId = auth.currentUser.uid;
-          const userData = await getUserData(userId);
-
-          if (userData) {
-            setUsername(userData.username || "User");
-            setProfilePic(userData.profilePic || null);
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-          Alert.alert("Error", "Failed to load user data.");
-        }
-      } else {
-        navigation.replace("Login");
-      }
-    };
-
     requestPermissions();
-    fetchUserData();
   }, [navigation]);
 
   // Change profile picture
   const changeProfilePicture = async () => {
+    if (isGoogleUser) {
+      return;
+    }
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ["images"],
@@ -85,7 +70,11 @@ export default function ProfileScreen({ navigation }) {
           text: "Logout",
           onPress: async () => {
             try {
-              await signOutUser(auth); 
+              if (isGoogleUser) {
+                await googleSignOut();
+              } else {
+                await signOutUser(auth);
+              }
               navigation.replace("Login");
             } catch (error) {
               console.error("Error signing out: ", error);
@@ -111,9 +100,7 @@ export default function ProfileScreen({ navigation }) {
       </TouchableOpacity>
 
       <Image
-        source={{
-          uri: profilePic || "https://via.placeholder.com/150",
-        }}
+        source={typeof profilePic === 'string' ? { uri: profilePic } : profilePic || blankProfilePic}
         style={{
           width: 120,
           height: 120,
@@ -136,7 +123,7 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.songTitle}>Change Profile Picture</Text>
       </TouchableOpacity>
 
-      <Text style={styles.title}>{username}</Text>
+      <Text style={styles.title}>{username || "User"}</Text>
 
       <TouchableOpacity
         style={{

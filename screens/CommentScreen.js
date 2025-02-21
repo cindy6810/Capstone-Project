@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -15,6 +15,11 @@ import {
 import { PanGestureHandler, State } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { auth } from '../Utility/firebaseConfig';
+import { getCurrentUser } from '../Utility/googleAuth';
+import { getUserData } from '../Utility/firebaseConfig';
+import { useUserData } from '../hooks/useUserData';
+import blankProfilePic from '../assets/blank_profile.png';
 
 
 export default function CommentScreen({ route }) {
@@ -22,8 +27,11 @@ export default function CommentScreen({ route }) {
   const navigation = useNavigation();
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState('');
+  const { username, profilePic } = useUserData();
   const insets = useSafeAreaInsets();
+ 
 
+  
   const translateY = useRef(new Animated.Value(0)).current;
   const scale = translateY.interpolate({
     inputRange: [0, 300],
@@ -76,8 +84,13 @@ export default function CommentScreen({ route }) {
         id: Date.now().toString(),
         text: comment,
         timestamp: new Date().toISOString(),
-        username: 'User' // Replace with actual user data when implemented
-      };
+        username: username, // Replace with actual user data when implemented
+        profilePic: profilePic // Default avatar
+    };
+
+
+        
+      
       setComments([newComment, ...comments]);
       setComment('');
     }
@@ -102,22 +115,31 @@ export default function CommentScreen({ route }) {
             style={styles.contentContainer}
             keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 12}
           >
-            <FlatList
-              data={comments}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View style={styles.commentItem}>
-                  <View style={styles.commentHeader}>
-                    <Text style={styles.username}>{item.username}</Text>
-                    <Text style={styles.timestamp}>
-                      {formatTimestamp(item.timestamp)}
-                    </Text>
+           <FlatList
+            data={comments}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.commentItem}>
+                <View style={styles.commentWrapper}>
+                <Image 
+                  source={typeof item.profilePic === 'string' ? { uri: item.profilePic } : item.profilePic}
+                  style={styles.profilePic}
+                 />
+                  <View style={styles.commentContent}>
+                    <View style={styles.commentHeader}>
+                      <Text style={styles.username}>{item.username}</Text>
+                      <Text style={styles.timestamp}>
+                        {formatTimestamp(item.timestamp)}
+                      </Text>
+                    </View>
+                    <Text style={styles.commentText}>{item.text}</Text>
                   </View>
-                  <Text style={styles.commentText}>{item.text}</Text>
                 </View>
-              )}
-              style={styles.commentList}
-            />
+              </View>
+            )}
+            style={styles.commentList}
+/>
+            
 
             <View style={styles.inputContainer}>
               <TextInput
@@ -192,7 +214,8 @@ const styles = StyleSheet.create({
   commentHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    alignItems: 'center',
+    marginBottom: 4,
   },
   username: {
     color: '#fff',
@@ -238,5 +261,23 @@ const styles = StyleSheet.create({
   submitText: {
     color: '#fff',
     fontWeight: '600',
-  }
+  },
+  userInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profilePic: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+  },
+  commentWrapper: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+  },
+
+  commentContent: {
+    flex: 1,
+    marginLeft: 8,
+  },
 });

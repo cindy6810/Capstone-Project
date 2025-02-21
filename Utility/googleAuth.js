@@ -24,7 +24,19 @@ export const signInWithGoogle = async () => {
   try {
     await GoogleSignin.hasPlayServices();
     const userInfo = await GoogleSignin.signIn();
-    return userInfo;
+    console.log('Sign in successful:', userInfo); // Add logging
+    
+    const userData = {
+      id: userInfo.data.user.id,
+      email: userInfo.data.user.email,
+      name: userInfo.data.user.name,
+      photoUrl: userInfo.data.user.photo,
+      givenName: userInfo.data.user.givenName,
+      familyName: userInfo.data.user.familyName
+    };
+      
+    
+    return userData;
   } catch (error) {
     if (error.code === statusCodes.SIGN_IN_CANCELLED) {
       console.log('User cancelled the login flow');
@@ -35,6 +47,45 @@ export const signInWithGoogle = async () => {
     } else {
       console.error(error);
     }
+    throw error;
+  }
+};
+
+export const getCurrentUser = async () => {
+  if (isExpoGo) return null;
+
+  try {
+    const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
+    const currentUser = await GoogleSignin.getCurrentUser();
+    
+    if (currentUser?.user) {
+      return {
+        id: currentUser.user.id,
+        email: currentUser.user.email,
+        name: currentUser.user.name,
+        photoUrl: currentUser.user.photo,
+        givenName: currentUser.user.givenName,
+        familyName: currentUser.user.familyName
+      };
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting current user:', error);
+    return null;
+  }
+};
+  
+ 
+
+export const signOut = async () => {
+  if (isExpoGo) return;
+  
+  try {
+    const { GoogleSignin } = await import('@react-native-google-signin/google-signin');
+    await GoogleSignin.signOut();
+    console.log('User signed out successfully');
+  } catch (error) {
+    console.error('Error signing out:', error);
     throw error;
   }
 };
