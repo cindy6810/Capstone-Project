@@ -8,14 +8,20 @@ const songController = {
         return res.status(400).json({ error: 'No file uploaded' });
       }
 
-      const fileUrl = await uploadToS3(req.file);
+      const songUrl = await uploadToS3(req.files.song[0], 'songs');
+
+      let coverUrl = null;
+      if (req.files?.cover) {
+        coverUrl = await uploadToS3(req.files.cover[0], 'covers');
+      }
       
       const songData = {
         title: req.body.title || req.file.originalname.split('.')[0],
         artistName: req.body.artistName || 'Unknown Artist',
         genre: req.body.genre || 'Unknown Genre', 
         duration: req.body.duration || 0,
-        fileUrl
+        fileUrl: songUrl,
+        song_photo_url: coverUrl
       };
 
       const result = await SongModel.create(songData);
