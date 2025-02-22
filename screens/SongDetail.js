@@ -6,6 +6,7 @@ import { styles } from "../styles";
 import Scrubber from "../components/Scrubber";
 import PlayPauseButton from "../components/PlayPauseButton";
 import SkipButton from "../components/SkipButton";
+import { useAudio } from "../context/AudioContext";
 
 const defaultCoverImage = require('../assets/note.jpg');
 
@@ -15,6 +16,7 @@ export default function SongDetailScreen({ route }) {
   const [sliderValue, setSliderValue] = useState(0);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
   const translateY = useRef(new Animated.Value(0)).current;
+  const { currentSong, isPlaying } = useAudio();
   
   
   const scale = translateY.interpolate({
@@ -81,7 +83,7 @@ export default function SongDetailScreen({ route }) {
     >
       <Animated.View style={[styles.songDetailsContainer, { transform: [{ translateY }] }]}>
         <View style={styles.imageTitleContainer}>
-        <Animated.Image 
+          <Animated.Image 
             source={
               song.song_photo_url 
                 ? { uri: song.song_photo_url }
@@ -99,12 +101,15 @@ export default function SongDetailScreen({ route }) {
             ]} 
           />
           <Text style={styles.songTitle}>{song.title}</Text>
-          <Text style={styles.songArtist}>{song.artist}</Text>
+          <Text style={styles.songArtist}>{song.artistName}</Text>
         </View>
         <Scrubber />
         <View style={styles.controls}>
           <SkipButton direction="back" onPress={() => {}} />
-          <PlayPauseButton onPress={() => {}} />
+          <PlayPauseButton 
+            song={song}
+            isPlaying={isPlaying && currentSong?.songId === song.songId}
+          />
           <SkipButton direction="forward" onPress={() => {}} />
         </View>
       </Animated.View>

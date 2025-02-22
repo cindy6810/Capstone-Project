@@ -4,7 +4,7 @@ export const styles = StyleSheet.create({
   // General styles
   container: {
     flex: 1,
-    backgroundColor: "#1a1a1a", 
+    backgroundColor: "rgb(4, 4, 4)", 
     padding: 20,
   },
   title: {
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#1a1a1a", 
+    backgroundColor: "rgb(4, 4, 4)", 
     padding: 15,
     paddingTop: 40, // For status bar spacing
   },
@@ -57,7 +57,14 @@ export const styles = StyleSheet.create({
   },
   // Tab bar customization
   tabBarStyle: {
-    backgroundColor: "#213555", // Match top bar
+    position: 'absolute',
+    height: 80,
+    paddingBottom: 20,
+    overflow: 'hidden',
+    elevation: 0, // Remove shadow on Android
+    borderTopWidth: 0.5,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
 
   //Song Detail styles
@@ -230,5 +237,14 @@ export const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 10,
   },
+  activeSongCard: {
+    backgroundColor: 'rgba(29, 185, 84, 0.1)',  // Spotify green with opacity
+  },
+  playIcon: {
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
+  },
+
 
 });

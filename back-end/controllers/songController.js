@@ -4,6 +4,8 @@ const { uploadToS3 } = require('../middleware/upload');
 const songController = {
   upload: async (req, res) => {
     try {
+      console.log('Request files:', req.files);
+      console.log('Request body:', req.body);
       if (!req.files || !req.files.song) {
         return res.status(400).json({ error: 'No file uploaded' });
       }
@@ -14,7 +16,7 @@ const songController = {
       if (req.files?.cover) {
         coverUrl = await uploadToS3(req.files.cover[0], 'covers');
       }
-      
+
       const songData = {
         title: req.body.title || req.file.originalname.split('.')[0],
         artistName: req.body.artistName || 'Unknown Artist',
@@ -60,7 +62,5 @@ const songController = {
     }
   }
 };
-
-
 
 module.exports = songController;

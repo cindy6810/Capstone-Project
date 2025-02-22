@@ -111,7 +111,7 @@ export default function CommentScreen({ route }) {
                     } style={styles.songImage} />
             <View style={styles.songInfo}>
               <Text style={styles.songTitle}>{song.title}</Text>
-              <Text style={styles.artistName}>{song.artist}</Text>
+              <Text style={styles.artistName}>{song.artistName}</Text>
             </View>
           </View>
 

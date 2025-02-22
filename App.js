@@ -3,10 +3,12 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { View, Text, TouchableOpacity } from "react-native";
-
+import { BlurView } from 'expo-blur';
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { AudioProvider } from './context/AudioContext';
+import { Audio } from 'expo-av';
 
 // Import screens
 import HomeScreen from "./screens/Home";
@@ -102,6 +104,19 @@ function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
+        tabBarBackground: () => (
+          <BlurView
+            tint="dark"
+            intensity={90}
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: '100%', // Added dark overlay
+            }}
+          />
+        ),
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === "Home") {
@@ -115,7 +130,11 @@ function TabNavigator() {
         },
         tabBarActiveTintColor: "#f1f1f1",
         tabBarInactiveTintColor: "#666",
-        tabBarStyle: styles.tabBarStyle,
+        tabBarStyle: {
+          ...styles.tabBarStyle,
+          backgroundColor: 'transparent',
+          borderTopColor: 'rgba(255, 255, 255, 0.1)',
+        },
         headerShown: false,
       })}
     >
@@ -128,48 +147,51 @@ function TabNavigator() {
 
 // Main App component
 export default function App() {
+  
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Home" component={TabNavigator} />
-          <Stack.Screen 
-            name="SongDetail" 
-            component={SongDetailScreen} 
+    <AudioProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <NavigationContainer>
+          <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Home" component={TabNavigator} />
+            <Stack.Screen 
+              name="SongDetail" 
+              component={SongDetailScreen} 
+              options={{ 
+                presentation: 'transparentModal', 
+              }} 
+            />
+            <Stack.Screen 
+            name="CommentScreen" 
+            component={CommentScreen} 
             options={{ 
-              presentation: 'transparentModal', 
-            }} 
+              presentation: 'transparentModal',
+              headerShown: false,
+              animation: 'default',
+              cardOverlayEnabled: true,  
+              animationEnabled: true,   
+              cardStyleInterpolator: ({ current: { progress } }) => ({
+                cardStyle: {
+                  opacity: progress,
+                },
+                overlayStyle: {
+                  opacity: progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, 0.5],
+                  }),
+                },
+              }),
+            }}
           />
-          <Stack.Screen 
-          name="CommentScreen" 
-          component={CommentScreen} 
-          options={{ 
-            presentation: 'transparentModal',
-            headerShown: false,
-            animation: 'default',
-            cardOverlayEnabled: true,  
-            animationEnabled: true,   
-            cardStyleInterpolator: ({ current: { progress } }) => ({
-              cardStyle: {
-                opacity: progress,
-              },
-              overlayStyle: {
-                opacity: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, 0.5],
-                }),
-              },
-            }),
-          }}
-        />
-          <Stack.Screen name="Profile" component={ProfileScreen} />
-          <Stack.Screen name="Settings" component={SettingsScreen} />
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="LoginFormPage" component={LoginFormPage} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} />
-          <Stack.Screen name="Upload" component={UploadScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </GestureHandlerRootView>
+            <Stack.Screen name="Profile" component={ProfileScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="LoginFormPage" component={LoginFormPage} />
+            <Stack.Screen name="SignUp" component={SignUpScreen} />
+            <Stack.Screen name="Upload" component={UploadScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </GestureHandlerRootView>
+    </AudioProvider>
   );
 }

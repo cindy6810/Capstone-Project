@@ -9,7 +9,13 @@
     "newArchEnabled": true,
     "plugins": [
       "expo-image-picker",
-      "@react-native-google-signin/google-signin"
+      "@react-native-google-signin/google-signin",
+      [
+        "expo-av",
+        {
+          "microphonePermission": false
+        }
+      ]
     ],
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -19,7 +25,10 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.tunely.app",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio"]
+      }
     },
     "android": {
       "adaptiveIcon": {

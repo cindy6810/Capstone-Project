@@ -23,18 +23,9 @@ const getApiUrl = () => {
         return 'http://localhost:3000/api';
     }
   }
-
-  // Production URLs
-  return Platform.select({
-    web: 'https://your-production-api.com/api',
-    ios: 'https://your-production-api.com/api',
-    android: 'https://your-production-api.com/api',
-    default: 'https://your-production-api.com/api'
-  });
 };
 
 export const API_URL = getApiUrl();
 
-// Debug logging
 console.log('Platform:', Platform.OS);
 console.log('API URL:', API_URL);

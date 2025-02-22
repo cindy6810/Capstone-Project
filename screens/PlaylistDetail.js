@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: "rgb(4,4,4))",
   },
   artwork: {
     width: 200,
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   safeArea: {
     flex: 1,
-    backgroundColor: "#1a1a1a",
+    backgroundColor: "rgb(4, 4, 4)",
   },
 });
 
