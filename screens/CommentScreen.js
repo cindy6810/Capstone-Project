@@ -29,6 +29,7 @@ export default function CommentScreen({ route }) {
   const [comment, setComment] = useState('');
   const { username, profilePic } = useUserData();
   const insets = useSafeAreaInsets();
+  const defaultCoverImage = require('../assets/note.jpg');
  
 
   
@@ -84,8 +85,8 @@ export default function CommentScreen({ route }) {
         id: Date.now().toString(),
         text: comment,
         timestamp: new Date().toISOString(),
-        username: username, // Replace with actual user data when implemented
-        profilePic: profilePic // Default avatar
+        username: username, 
+        profilePic: profilePic 
     };
 
 
@@ -103,7 +104,11 @@ export default function CommentScreen({ route }) {
       >
         <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
           <View style={styles.header}>
-            <Image source={song.image} style={styles.songImage} />
+            <Image source={
+                      song.song_photo_url 
+                        ? { uri: song.song_photo_url }
+                        : defaultCoverImage
+                    } style={styles.songImage} />
             <View style={styles.songInfo}>
               <Text style={styles.songTitle}>{song.title}</Text>
               <Text style={styles.artistName}>{song.artist}</Text>

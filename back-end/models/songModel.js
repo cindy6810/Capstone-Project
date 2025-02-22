@@ -18,12 +18,12 @@ const SongModel = {
   },
 
   getAll: async () => {
-    return await db.query('SELECT * FROM songs ORDER BY created_at DESC');
+    return await db.query('SELECT * FROM songs ORDER BY songId DESC');
   },
 
-  getById: async (id) => {
-    const sql = 'SELECT * FROM songs WHERE id = ?';
-    const results = await db.query(sql, [id]);
+  getById: async (songId) => {
+    const sql = 'SELECT * FROM songs WHERE songId = ?';
+    const results = await db.query(sql, [songId]);
     return results[0];
   }
 };

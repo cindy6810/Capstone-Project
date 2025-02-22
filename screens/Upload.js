@@ -1,186 +1,213 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, Alert, TextInput, Image, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
-import { launchImageLibrary } from "react-native-image-picker";
 import * as DocumentPicker from "expo-document-picker";
-import { auth } from "../Utility/firebaseConfig";
-import { uploadFile, addSongToDatabase } from "../Utility/firebaseConfig";
-import { Ionicons } from "@expo/vector-icons"; 
+import * as ImagePicker from "expo-image-picker";
+import { Ionicons } from "@expo/vector-icons";
+import { songService } from "../services/songService";
 
 export default function Upload({ navigation }) {
-  const [uploadType, setUploadType] = useState(null); 
+  const [loading, setLoading] = useState(false);
   const [songTitle, setSongTitle] = useState("");
-  const [songImage, setSongImage] = useState(null);
+  const [artistName, setArtistName] = useState("");
+  const [genre, setGenre] = useState("");
   const [songFile, setSongFile] = useState(null);
-  const [explicit, setExplicit] = useState("clean");
-  const [contributions, setContributions] = useState("");
-
-  const pickImage = () => {
-    launchImageLibrary({ mediaType: "photo", quality: 0.8 }, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled image picker");
-      } else if (response.error) {
-        console.log("ImagePicker Error: ", response.error);
-      } else if (response.assets?.length > 0) {
-        setSongImage(response.assets[0].uri);
-      }
-    });
-  };
+  const [coverImage, setCoverImage] = useState(null);
 
   const pickSong = async () => {
-    const result = await DocumentPicker.getDocumentAsync({ type: "audio/*" });
+    try {
+      const result = await DocumentPicker.getDocumentAsync({ 
+        type: "audio/*",
+        copyToCacheDirectory: true
+      });
 
-    if (!result.canceled) {
-      setSongFile(result.uri);
+      if (!result.canceled) {
+        setSongFile(result.assets[0]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to pick song");
+    }
+  };
+
+  const pickCover = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.8,
+      });
+
+      if (!result.canceled) {
+        setCoverImage(result.assets[0]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to pick cover image");
     }
   };
 
   const handleUpload = async () => {
-    if (!songTitle || !songImage || !songFile || !contributions) {
-      Alert.alert("Error", "Please fill in all fields and select a song and image.");
+    if (!songTitle || !songFile) {
+      Alert.alert("Error", "Please fill in the required fields and select a song");
       return;
     }
 
-    try {
-      const userId = auth.currentUser.uid;
-      const imageUrl = await uploadFile(userId, songImage, "images");
-      const songUrl = await uploadFile(userId, songFile, "songs");
+    setLoading(true);
 
-      await addSongToDatabase({
-        title: songTitle,
-        image: imageUrl,
-        song: songUrl,
-        explicit: explicit === "explicit",
-        contributions: contributions.split(",").map((c) => c.trim()),
-        userId,
+    try {
+      const formData = new FormData();
+      
+      // Append song file
+      formData.append('song', {
+        uri: songFile.uri,
+        type: 'audio/mpeg',
+        name: songFile.name || 'song.mp3'
       });
 
+      // Append cover if selected
+      if (coverImage) {
+        formData.append('cover', {
+          uri: coverImage.uri,
+          type: 'image/jpeg',
+          name: 'cover.jpg'
+        });
+      }
+
+      // Append metadata
+      formData.append('title', songTitle);
+      formData.append('artistName', artistName);
+      formData.append('genre', genre);
+
+      const result = await songService.uploadSong(formData);
       Alert.alert("Success", "Song uploaded successfully!");
       navigation.goBack();
     } catch (error) {
-      console.error("Error uploading song:", error);
-      Alert.alert("Error", "Failed to upload song.");
+      console.error("Upload error:", error);
+      Alert.alert("Error", "Failed to upload song");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={24} color="#fff" />
       </TouchableOpacity>
 
-      {!uploadType ? (
-        <View style={styles.container}>
-          <Text style={styles.title}>What would you like to upload?</Text>
-          <TouchableOpacity style={styles.button} onPress={() => setUploadType("song")}>
-            <Text style={styles.buttonText}>Upload a Song</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={() => setUploadType("album")}>
-            <Text style={styles.buttonText}>Upload an Album</Text>
-          </TouchableOpacity>
-        </View>
-      ) : uploadType === "song" ? (
-        <View style={styles.container}>
-          <TouchableOpacity style={styles.button} onPress={pickSong}>
-            <Text style={styles.buttonText}>Upload Song File</Text>
-          </TouchableOpacity>
+      <View style={styles.form}>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={pickSong}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {songFile ? 'Song Selected' : 'Select Song'}
+          </Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity style={styles.button} onPress={pickImage}>
-            <Text style={styles.buttonText}>Upload Picture</Text>
-          </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={pickCover}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {coverImage ? 'Cover Selected' : 'Select Cover (Optional)'}
+          </Text>
+        </TouchableOpacity>
 
-          {songImage && <Image source={{ uri: songImage }} style={styles.songImagePreview} />}
-
-          <TextInput
-            style={styles.input}
-            placeholder="Name of the Song"
-            placeholderTextColor="#aaa"
-            value={songTitle}
-            onChangeText={setSongTitle}
+        {coverImage && (
+          <Image 
+            source={{ uri: coverImage.uri }} 
+            style={styles.coverPreview} 
           />
+        )}
 
-          <Picker selectedValue={explicit} style={styles.picker} onValueChange={setExplicit}>
-            <Picker.Item label="Clean" value="clean" />
-            <Picker.Item label="Explicit" value="explicit" />
-          </Picker>
+        <TextInput
+          style={styles.input}
+          placeholder="Song Title"
+          placeholderTextColor="#aaa"
+          value={songTitle}
+          onChangeText={setSongTitle}
+          editable={!loading}
+        />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Contributions (comma separated)"
-            placeholderTextColor="#aaa"
-            value={contributions}
-            onChangeText={setContributions}
-          />
+        <TextInput
+          style={styles.input}
+          placeholder="Artist Name"
+          placeholderTextColor="#aaa"
+          value={artistName}
+          onChangeText={setArtistName}
+          editable={!loading}
+        />
 
-          <TouchableOpacity style={styles.button} onPress={handleUpload}>
-            <Text style={styles.buttonText}>Upload</Text>
-          </TouchableOpacity>
+        <TextInput
+          style={styles.input}
+          placeholder="Genre"
+          placeholderTextColor="#aaa"
+          value={genre}
+          onChangeText={setGenre}
+          editable={!loading}
+        />
 
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => Alert.alert("Info", "Schedule upload feature coming soon!")}
-          >
-            <Text style={styles.buttonText}>Schedule Upload</Text>
-          </TouchableOpacity>
-        </View>
-      ) : (
-        <View style={styles.container}>
-          <Text style={styles.title}>Upload Album (Coming Soon)</Text>
-          <TouchableOpacity style={styles.button} onPress={() => setUploadType(null)}>
-            <Text style={styles.buttonText}>Go Back</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+        <TouchableOpacity 
+          style={[styles.button, loading && styles.buttonDisabled]} 
+          onPress={handleUpload}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? 'Uploading...' : 'Upload Song'}
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#121212',
+    padding: 20,
+  },
+  form: {
+    marginTop: 60,
+  },
   backButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 40,
     left: 10,
     zIndex: 10,
     padding: 10,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#f1f1f1",
-    marginBottom: 20,
-    textAlign: "center",
-  },
   button: {
-    backgroundColor: "#213555",
+    backgroundColor: '#213555',
     padding: 15,
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
     marginVertical: 10,
   },
+  buttonDisabled: {
+    opacity: 0.5,
+  },
   buttonText: {
-    color: "#f1f1f1",
-    fontWeight: "bold",
+    color: '#f1f1f1',
+    fontWeight: 'bold',
     fontSize: 16,
   },
-  songImagePreview: {
+  input: {
+    backgroundColor: '#2a2a2a',
+    color: '#f1f1f1',
+    padding: 15,
+    borderRadius: 8,
+    marginVertical: 10,
+    fontSize: 16,
+  },
+  coverPreview: {
     width: 150,
     height: 150,
     borderRadius: 8,
+    alignSelf: 'center',
     marginVertical: 10,
-  },
-  input: {
-    backgroundColor: "#2a2a2a",
-    color: "#f1f1f1",
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 10,
-    width: "100%",
-  },
-  picker: {
-    backgroundColor: "#2a2a2a",
-    color: "#f1f1f1",
-    marginBottom: 10,
-    width: "100%",
-  },
+  }
 });

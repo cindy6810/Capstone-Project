@@ -4,7 +4,7 @@ const { uploadToS3 } = require('../middleware/upload');
 const songController = {
   upload: async (req, res) => {
     try {
-      if (!req.file) {
+      if (!req.files || !req.files.song) {
         return res.status(400).json({ error: 'No file uploaded' });
       }
 
@@ -36,6 +36,21 @@ const songController = {
     }
   },
 
+  getSongById: async (req, res) => {
+    try {
+      const song = await SongModel.getById(req.params.id);
+      
+      if (!song) {
+        return res.status(404).json({ error: 'Song not found' });
+      }
+      
+      res.json(song);
+    } catch (error) {
+      console.error('Error fetching song:', error);
+      res.status(500).json({ error: 'Failed to fetch song' });
+    }
+  },
+
   getAllSongs: async (req, res) => {
     try {
       const songs = await SongModel.getAll();
@@ -45,5 +60,7 @@ const songController = {
     }
   }
 };
+
+
 
 module.exports = songController;

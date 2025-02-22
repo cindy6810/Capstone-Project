@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, View, FlatList, TouchableOpacity, Image } from "react-native";
+import { Text, View, FlatList, TouchableOpacity, Image, ActivityIndicator} from "react-native";
 import { styles } from "../styles";
 import { useNavigation } from "@react-navigation/native";
 import SongCard from "../components/SongCard";
@@ -7,19 +7,16 @@ import SongCard2 from "../components/SongCard2";
 import NavButton from "../components/PlayListButton";
 import PlayList from "../components/Playlist";
 import { ScrollView } from "react-native-gesture-handler";
+import { useGetSongs } from "../hooks/useGetSongs";
+
 
 
 
 export default function HomeScreen() {
 
   const navigation = useNavigation();
+  const { songs, loading, error, refreshSongs } = useGetSongs();
 
-  const songs = [
-    { id: "1", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "2", title: "Song 2", artist: "Artist 2", image: require("../assets/graduation.jpg") },
-    { id: "3", title: "Song 3", artist: "Artist 3", image: require("../assets/graduation.jpg") },
-    { id: "4", title: "Song 4", artist: "Artist 4", image: require("../assets/graduation.jpg") },
-  ];
   const playlists = [
     { id: "1", title: "My Playlist 1", image: require("../assets/graduation.jpg") },
     { id: "2", title: "My Playlist 2", image: require("../assets/graduation.jpg") },
@@ -30,22 +27,38 @@ export default function HomeScreen() {
 
   const renderHeader = () => (
     <>
-
       <Text style={[styles.title, { marginBottom: 20 }]}>Welcome to Tunely</Text>
+      
       <Text style={styles.subtitle}>New Music</Text>
-      <FlatList
-        data={songs}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <SongCard song={item} />}
-        scrollEnabled={false} // Disable inner scrolling so the main list handles vertical scrolling
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#f1f1f1" />
+      ) : (
+        <FlatList
+          data={songs}
+          keyExtractor={(item) => item.songId.toString()}
+          renderItem={({ item }) => <SongCard song={item} />}
+          scrollEnabled={false}
+          ListEmptyComponent={() => (
+            <Text style={styles.emptyText}>No songs available</Text>
+          )}
+        />
+      )}
+
       <Text style={styles.subtitle}>Featured Music</Text>
-      <FlatList
-        data={songs}
-        keyExtractor={(item) => item.id}
-        horizontal
-        renderItem={({ item }) => <SongCard2 song={item} />}
-      />
+      {loading ? (
+        <ActivityIndicator size="large" color="#f1f1f1" />
+      ) : (
+        <FlatList
+          data={songs}
+          keyExtractor={(item) => item.songId.toString()}
+          horizontal
+          renderItem={({ item }) => <SongCard2 song={item} />}
+          ListEmptyComponent={() => (
+            <Text style={styles.emptyText}>No featured songs</Text>
+          )}
+        />
+      )}
+
       <Text style={styles.subtitle}>Playlists</Text>
     </>
   );
@@ -64,7 +77,15 @@ export default function HomeScreen() {
           />
         )}
         showsVerticalScrollIndicator={false}
+        onRefresh={refreshSongs}
+        refreshing={loading}
       />
+      {error && (
+        <Text style={styles.errorText}>
+          Error loading songs: {error}
+        </Text>
+      )}
     </View>
   );
 }
+

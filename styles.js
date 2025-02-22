@@ -217,6 +217,18 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
-  }
+  },
+  emptyText: {
+    color: '#999',
+    fontSize: 16,
+    textAlign: 'center',
+    padding: 20,
+  },
+  errorText: {
+    color: '#ff6b6b',
+    fontSize: 14,
+    textAlign: 'center',
+    padding: 10,
+  },
 
 });

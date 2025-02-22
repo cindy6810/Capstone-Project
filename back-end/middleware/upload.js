@@ -16,7 +16,10 @@ const uploadMiddleware = multer({
     }
     cb(null, true);
   }
-});
+}).fields([
+  { name: 'song', maxCount: 1 },
+  { name: 'cover', maxCount: 1 }
+]);
 
 const uploadToS3 = async (file, folder) => {
   if (!file) return null;
@@ -27,6 +30,7 @@ const uploadToS3 = async (file, folder) => {
     Key: key,
     Body: file.buffer,
     ContentType: file.mimetype,
+    ACL: 'public-read',
   };
 
   try {

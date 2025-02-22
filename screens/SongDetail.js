@@ -7,14 +7,13 @@ import Scrubber from "../components/Scrubber";
 import PlayPauseButton from "../components/PlayPauseButton";
 import SkipButton from "../components/SkipButton";
 
-
+const defaultCoverImage = require('../assets/note.jpg');
 
 export default function SongDetailScreen({ route }) {
   const { song } = route.params;
   const navigation = useNavigation();
   const [sliderValue, setSliderValue] = useState(0);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
-
   const translateY = useRef(new Animated.Value(0)).current;
   
   
@@ -82,8 +81,12 @@ export default function SongDetailScreen({ route }) {
     >
       <Animated.View style={[styles.songDetailsContainer, { transform: [{ translateY }] }]}>
         <View style={styles.imageTitleContainer}>
-          <Animated.Image 
-            source={song.image} 
+        <Animated.Image 
+            source={
+              song.song_photo_url 
+                ? { uri: song.song_photo_url }
+                : defaultCoverImage
+            }
             style={[
               styles.songImage, 
               { 
