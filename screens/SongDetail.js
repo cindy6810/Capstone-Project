@@ -16,7 +16,25 @@ export default function SongDetailScreen({ route }) {
   const [sliderValue, setSliderValue] = useState(0);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
   const translateY = useRef(new Animated.Value(0)).current;
-  const { currentSong, isPlaying } = useAudio();
+  const { currentSong, isPlaying, playNextSong, playPreviousSong, playlist } = useAudio();
+
+  const handleNext = async () => {
+    const currentIndex = playlist.findIndex(s => s.songId === song.songId);
+    if (currentIndex < playlist.length - 1) {
+      const nextSong = playlist[currentIndex + 1];
+      await playNextSong();
+      navigation.replace('SongDetail', { song: nextSong });
+    }
+  };
+
+  const handlePrevious = async () => {
+    const currentIndex = playlist.findIndex(s => s.songId === song.songId);
+    if (currentIndex > 0) {
+      const previousSong = playlist[currentIndex - 1];
+      await playPreviousSong();
+      navigation.replace('SongDetail', { song: previousSong });
+    }
+  };
   
   
   const scale = translateY.interpolate({
@@ -105,12 +123,12 @@ export default function SongDetailScreen({ route }) {
         </View>
         <Scrubber />
         <View style={styles.controls}>
-          <SkipButton direction="back" onPress={() => {}} />
+          <SkipButton direction="back" onPress={handlePrevious} />
           <PlayPauseButton 
             song={song}
             isPlaying={isPlaying && currentSong?.songId === song.songId}
           />
-          <SkipButton direction="forward" onPress={() => {}} />
+          <SkipButton direction="forward" onPress={handleNext} />
         </View>
       </Animated.View>
     </PanGestureHandler>

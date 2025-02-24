@@ -8,6 +8,7 @@ import NavButton from "../components/PlayListButton";
 import PlayList from "../components/Playlist";
 import { ScrollView } from "react-native-gesture-handler";
 import { useGetSongs } from "../hooks/useGetSongs";
+import { useAudio } from "../context/AudioContext";
 
 
 
@@ -16,6 +17,7 @@ export default function HomeScreen() {
 
   const navigation = useNavigation();
   const { songs, loading, error, refreshSongs } = useGetSongs();
+  const { changePlaylist } = useAudio();
 
   const playlists = [
     { id: "1", title: "My Playlist 1", image: require("../assets/graduation.jpg") },
@@ -23,11 +25,16 @@ export default function HomeScreen() {
     
   ];
 
+  React.useEffect(() => {
+    if (songs?.length > 0) {
+      changePlaylist(songs, 'all');
+    }
+  }, [songs]);
+
   
 
   const renderHeader = () => (
     <>
-      <Text style={[styles.title, { marginBottom: 20 }]}>Welcome to Tunely</Text>
       
       <Text style={styles.subtitle}>New Music</Text>
       {loading ? (

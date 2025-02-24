@@ -21,7 +21,6 @@ const SongCard = ({ song }) => {
     } else {
       await playSound(song);
     }
-    navigation.navigate("SongDetail", { song });
   };
 
   const isCurrentSong = currentSong?.songId === song.songId;

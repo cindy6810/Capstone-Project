@@ -7,6 +7,33 @@ export const AudioProvider = ({ children }) => {
   const [sound, setSound] = useState(null);
   const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [playlist, setPlaylist] = useState([]);
+  const [playlistSource, setPlaylistSource] = useState('all');
+
+  const changePlaylist = (songs, source) => {
+    setPlaylist(songs);
+    setPlaylistSource(source);
+  };
+
+  const playNextSong = async () => {
+    if (!currentSong || playlist.length === 0) return;
+    
+    const currentIndex = playlist.findIndex(song => song.songId === currentSong.songId);
+    if (currentIndex === -1 || currentIndex === playlist.length - 1) return;
+    
+    const nextSong = playlist[currentIndex + 1];
+    await playSound(nextSong);
+  };
+
+  const playPreviousSong = async () => {
+    if (!currentSong || playlist.length === 0) return;
+    
+    const currentIndex = playlist.findIndex(song => song.songId === currentSong.songId);
+    if (currentIndex === -1 || currentIndex === 0) return;
+    
+    const previousSong = playlist[currentIndex - 1];
+    await playSound(previousSong);
+  };
 
   const playSound = async (song) => {
     try {
@@ -19,7 +46,6 @@ export const AudioProvider = ({ children }) => {
           return;
         }
       }
-
       // Unload previous sound if exists
       if (sound) {
         await sound.unloadAsync();
@@ -67,6 +93,7 @@ export const AudioProvider = ({ children }) => {
       setIsPlaying(status.isPlaying);
       if (status.didJustFinish) {
         setIsPlaying(false);
+        playNextSong(); // Auto-play next song
       }
     }
   };
@@ -85,9 +112,14 @@ export const AudioProvider = ({ children }) => {
         sound,
         currentSong,
         isPlaying,
+        playlist,
+        playlistSource,
         playSound,
         pauseSound,
-        resumeSound 
+        resumeSound,
+        playNextSong,
+        playPreviousSong,
+        changePlaylist
       }}
     >
       {children}

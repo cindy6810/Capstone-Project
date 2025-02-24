@@ -26,6 +26,7 @@ import UserPlayList from './screens/UserPlayList';
 import PlayListButton from "./components/PlayListButton";
 import CommentScreen from "./screens/CommentScreen";
 import TopBarProfileIcon from './components/TopBarProfileIcon';
+import FloatingPlayer from './components/FloatingPlayer';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -113,7 +114,7 @@ function TabNavigator() {
               bottom: 0,
               left: 0,
               right: 0,
-              height: '100%', // Added dark overlay
+              height: '100%', 
             }}
           />
         ),
@@ -134,6 +135,8 @@ function TabNavigator() {
           ...styles.tabBarStyle,
           backgroundColor: 'transparent',
           borderTopColor: 'rgba(255, 255, 255, 0.1)',
+          height: 70,
+          paddingBottom: 5,
         },
         headerShown: false,
       })}
@@ -152,16 +155,17 @@ export default function App() {
     <AudioProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
-          <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="Home" component={TabNavigator} />
-            <Stack.Screen 
-              name="SongDetail" 
-              component={SongDetailScreen} 
-              options={{ 
-                presentation: 'transparentModal', 
-              }} 
-            />
-            <Stack.Screen 
+          <View style={{ flex: 1 }}>
+            <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="Home" component={TabNavigator} />
+              <Stack.Screen 
+                name="SongDetail" 
+                component={SongDetailScreen} 
+                options={{ 
+                  presentation: 'transparentModal', 
+                }} 
+              />
+              <Stack.Screen 
             name="CommentScreen" 
             component={CommentScreen} 
             options={{ 
@@ -183,13 +187,15 @@ export default function App() {
               }),
             }}
           />
-            <Stack.Screen name="Profile" component={ProfileScreen} />
-            <Stack.Screen name="Settings" component={SettingsScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="LoginFormPage" component={LoginFormPage} />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-            <Stack.Screen name="Upload" component={UploadScreen} />
-          </Stack.Navigator>
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen name="Settings" component={SettingsScreen} />
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="LoginFormPage" component={LoginFormPage} />
+              <Stack.Screen name="SignUp" component={SignUpScreen} />
+              <Stack.Screen name="Upload" component={UploadScreen} />
+            </Stack.Navigator>
+            <FloatingPlayer />
+          </View>
         </NavigationContainer>
       </GestureHandlerRootView>
     </AudioProvider>
