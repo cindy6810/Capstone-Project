@@ -10,9 +10,6 @@ import { ScrollView } from "react-native-gesture-handler";
 import { useGetSongs } from "../hooks/useGetSongs";
 import { useAudio } from "../context/AudioContext";
 
-
-
-
 export default function HomeScreen() {
 
   const navigation = useNavigation();
@@ -70,6 +67,7 @@ export default function HomeScreen() {
     </>
   );
 
+  // Styles
   return (
     <View style={styles.container}>
       <FlatList
