@@ -25,7 +25,6 @@ export const useUserData = () => {
         const userData = await authService.getCurrentUserProfile();
         
         if (userData && !userData.error) {
-          // Set user data from API response
           setUsername(userData.username || 'User');
           setProfilePic(userData.profile_pic_url || blankProfilePic);
         }
