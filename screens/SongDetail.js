@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, Text, Image, Animated, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { PanGestureHandler, State } from "react-native-gesture-handler";
@@ -7,6 +7,11 @@ import Scrubber from "../components/Scrubber";
 import PlayPauseButton from "../components/PlayPauseButton";
 import SkipButton from "../components/SkipButton";
 import { useAudio } from "../context/AudioContext";
+import { Ionicons } from '@expo/vector-icons';
+import { likesService } from "../services/likesService";
+import { Alert } from 'react-native';
+import { auth } from '../Utility/firebaseConfig';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const defaultCoverImage = require('../assets/note.jpg');
 
@@ -17,6 +22,10 @@ export default function SongDetailScreen({ route }) {
   const SCREEN_HEIGHT = Dimensions.get('window').height;
   const translateY = useRef(new Animated.Value(0)).current;
   const { currentSong, isPlaying, playNextSong, playPreviousSong, playlist } = useAudio();
+
+  const [isLiked, setIsLiked] = useState(false);
+  const [likeCount, setLikeCount] = useState(song.likes || 0);
+  const [isLikeLoading, setIsLikeLoading] = useState(false);
 
   const handleNext = async () => {
     const currentIndex = playlist.findIndex(s => s.songId === song.songId);
@@ -33,6 +42,33 @@ export default function SongDetailScreen({ route }) {
       const previousSong = playlist[currentIndex - 1];
       await playPreviousSong();
       navigation.replace('SongDetail', { song: previousSong });
+    }
+  };
+
+  const toggleLike = async () => {
+    if (isLikeLoading) return;
+    
+    try {
+      setIsLikeLoading(true);
+      const user = auth.currentUser;
+      
+      if (!user) {
+        Alert.alert('Sign In Required', 'Please sign in to like songs');
+        return;
+      }
+
+      // Use the existing likesService
+      const result = await likesService.toggleLike(song.songId);
+      console.log('Toggle like result:', result);
+      
+      // Update UI based on result
+      setIsLiked(result.action === 'liked');
+      setLikeCount(result.likeCount);
+      
+    } catch (error) {
+      console.error('Error toggling like:', error);
+    } finally {
+      setIsLikeLoading(false);
     }
   };
   
@@ -94,6 +130,27 @@ export default function SongDetailScreen({ route }) {
     return unsubscribe;
   }, [navigation]);
 
+  useEffect(() => {
+    const checkLikeStatus = async () => {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+  
+        const result = await likesService.checkLiked(song.songId);
+        setIsLiked(result.liked);
+        
+        // Optionally update like count if your API returns it
+        if (result.likeCount) {
+          setLikeCount(result.likeCount);
+        }
+      } catch (error) {
+        console.error('Error checking like status:', error);
+      }
+    };
+  
+    checkLikeStatus();
+  }, [song.songId]);
+
   return (
     <PanGestureHandler
       onGestureEvent={onGestureEvent}
@@ -121,6 +178,8 @@ export default function SongDetailScreen({ route }) {
           <Text style={styles.songTitle}>{song.title}</Text>
           <Text style={styles.songArtist}>{song.artistName}</Text>
         </View>
+        
+        
         <Scrubber />
         <View style={styles.controls}>
           <SkipButton direction="back" onPress={handlePrevious} />
@@ -129,7 +188,26 @@ export default function SongDetailScreen({ route }) {
             isPlaying={isPlaying && currentSong?.songId === song.songId}
           />
           <SkipButton direction="forward" onPress={handleNext} />
+          
         </View>
+        <LinearGradient
+          colors={['#111', '#333']} 
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.likeContainer}>
+            <TouchableOpacity 
+              onPress={toggleLike}
+              disabled={isLikeLoading}
+              style={styles.likeButton}
+            >
+              <Ionicons 
+                name={isLiked ? "heart" : "heart-outline"} 
+                size={30} 
+                color={isLiked ? "#ff375f" : "#ffffff"} 
+              />
+            </TouchableOpacity>
+            <Text style={styles.likeCount}>{likeCount}</Text>
+            </LinearGradient>
       </Animated.View>
     </PanGestureHandler>
   );

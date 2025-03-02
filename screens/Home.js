@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { Text, View, FlatList, TouchableOpacity, Image, ActivityIndicator} from "react-native";
 import { styles } from "../styles";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect} from "@react-navigation/native";
 import SongCard from "../components/SongCard";
 import SongCard2 from "../components/SongCard2";
 import NavButton from "../components/PlayListButton";
@@ -22,11 +22,11 @@ export default function HomeScreen() {
     
   ];
 
-  React.useEffect(() => {
-    if (songs?.length > 0) {
-      changePlaylist(songs, 'all');
-    }
-  }, [songs]);
+  useFocusEffect(
+        useCallback(() => {
+          refreshSongs();
+        }, [])
+      );
 
   
 
@@ -67,7 +67,6 @@ export default function HomeScreen() {
     </>
   );
 
-  // Styles
   return (
     <View style={styles.container}>
       <FlatList

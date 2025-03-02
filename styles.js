@@ -6,6 +6,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgb(4, 4, 4)", 
     padding: 20,
+    paddingBottom: 90,
   },
   title: {
     fontSize: 20,
@@ -238,12 +239,33 @@ export const styles = StyleSheet.create({
     padding: 10,
   },
   activeSongCard: {
-    backgroundColor: 'rgba(29, 185, 84, 0.1)',  // Spotify green with opacity
+    backgroundColor: 'rgba(29, 185, 84, 0.1)', 
   },
   playIcon: {
     position: 'absolute',
     right: 10,
     bottom: 10,
+  },
+  likeContainer: {
+    left: 30,
+    bottom: 70,
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    borderRadius: 25,
+    paddingHorizontal: 15,
+    
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 10,
+  },
+  likeButton: {
+    padding: 8,
+  },
+  likeCount: {
+    color: '#ffffff',
+    fontSize: 18,
+    marginLeft: 5,
   },
 
 

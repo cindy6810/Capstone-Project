@@ -10,7 +10,9 @@ app.use(express.json());
 
 // Routes
 const songRoutes = require('./routes/songRoutes');
+const userRoutes = require('./routes/userRoutes');
 app.use('/api/songs', songRoutes);
+app.use('/api/users', userRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {

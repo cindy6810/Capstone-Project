@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { songService } from '../services/songService';
 import { useAudio } from '../context/AudioContext';
+import { likesService } from '../services/likesService';
 
 export const useGetSongs = (source = 'all') => {
   const [songs, setSongs] = useState([]);
@@ -18,6 +19,10 @@ export const useGetSongs = (source = 'all') => {
         case 'all':
         default:
           data = await songService.getAllSongs();
+          break;
+
+        case 'liked':
+          data = await likesService.getLikedSongs();
           break;
       }
       

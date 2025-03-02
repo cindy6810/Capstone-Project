@@ -32,7 +32,8 @@ export const signInWithGoogle = async () => {
       name: userInfo.data.user.name,
       photoUrl: userInfo.data.user.photo,
       givenName: userInfo.data.user.givenName,
-      familyName: userInfo.data.user.familyName
+      familyName: userInfo.data.user.familyName,
+      idToken: userInfo.data.idToken
     };
       
     

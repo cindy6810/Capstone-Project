@@ -4,14 +4,12 @@ import { Platform } from 'react-native';
 export const songService = {
     uploadSong: async (formData) => {
         try {
-          // Validate FormData before sending
           if (!formData || !formData._parts || formData._parts.length === 0) {
             throw new Error('Invalid form data');
           }
 
           console.log('Uploading to:', `${API_URL}/songs/upload`);
           
-          // Log the form data for debugging
           formData._parts.forEach(part => {
             console.log('Form part:', {
               name: part[0],
@@ -73,4 +71,6 @@ export const songService = {
       throw error;
     }
   }
+
+  
 };

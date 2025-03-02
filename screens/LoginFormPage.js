@@ -1,17 +1,21 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity, TextInput, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native"; 
-import { signInWithEmailAndPassword } from "../Utility/firebaseConfig";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import GoogleButton from '../components/GoogleButton';
+import { authService } from '../services/authService'; 
+import { auth } from "../Utility/firebaseConfig";
+import { Button } from 'react-native-paper';
 
 export default function LoginFormPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation(); 
+  const [isLoading, setIsLoading] = useState(false); 
 
   const handleLogin = async () => {
     try {
-      await signInWithEmailAndPassword(email, password);
+      await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Success", "Logged in successfully!");
       navigation.navigate("Home"); 
     } catch (error) {
@@ -19,11 +23,21 @@ export default function LoginFormPage() {
     }
   };
 
-  const handleGoogleSignIn = (userInfo) => {
-    console.log('User info:', userInfo);
-    // Handle user info after successful sign-in
-    Alert.alert("Success", "Logged in with Google successfully!");
-    navigation.navigate("Home");
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const userInfo = await authService.signInWithGoogleAuth();
+      console.log('Received from GoogleButton:', userInfo);
+      console.log('User info:', userInfo);
+      Alert.alert("Success", "Logged in with Google successfully!");
+      navigation.navigate("Home");
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      Alert.alert("Error", error.message || "Failed to sign in with Google");
+    }
+    finally {
+      setIsLoading(false); // Add this
+    }
   };
 
   return (
@@ -50,9 +64,25 @@ export default function LoginFormPage() {
         value={password}
         onChangeText={setPassword}
       />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </TouchableOpacity>
+     <Button
+      mode="contained" 
+      onPress={handleLogin}
+      loading={isLoading}
+      dark={true}
+      icon="login"
+      uppercase={false}
+      contentStyle={{ height: 50, backgroundColor: '#004e92' }}  
+      style={{
+        width: '100%',
+        borderRadius: 25,
+        marginBottom: 15,
+        elevation: 8,
+        marginTop: 10,
+      }}
+  labelStyle={{ fontWeight: '700', fontSize: 16 }}>
+  Log In
+</Button>
+
 
       <Text style={styles.orText}>Or</Text>
 
@@ -91,7 +121,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   buttonText: {
-    color: "#2B3595",
+    color: "#ffffff",
     fontWeight: "bold",
   },
   backButton: {
@@ -110,4 +140,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     fontSize: 16,
   },
+  paperButton: {
+    width: '100%',
+    marginBottom: 10,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#004e92',
+  }
 });

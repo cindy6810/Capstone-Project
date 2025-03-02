@@ -8,6 +8,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { AudioProvider } from './context/AudioContext';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { Audio } from 'expo-av';
 
 // Import screens
@@ -152,11 +153,12 @@ function TabNavigator() {
 export default function App() {
   
   return (
+    <PaperProvider>
     <AudioProvider>
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
           <View style={{ flex: 1 }}>
-            <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="LoginFormPage" screenOptions={{ headerShown: false }}>
               <Stack.Screen name="Home" component={TabNavigator} />
               <Stack.Screen 
                 name="SongDetail" 
@@ -199,5 +201,6 @@ export default function App() {
         </NavigationContainer>
       </GestureHandlerRootView>
     </AudioProvider>
+    </PaperProvider>
   );
 }

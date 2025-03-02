@@ -1,16 +1,26 @@
-import React from "react";
+import React, { useEffect, useCallback } from "react";
 import { Text, View, FlatList } from "react-native";
 import { styles } from "../styles";
-import { useNavigation } from "@react-navigation/native";
-import { useRoute } from "@react-navigation/native";
-import { StyleSheet } from "react-native";
+import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
+import { StyleSheet} from "react-native";
 import SongCard from "../components/SongCard";
 import NavButton from "../components/PlayListButton";
+import { useGetSongs } from "../hooks/useGetSongs";
+import { useAudio } from "../context/AudioContext";
 
 export default function LibraryScreen() {
   const navigation = useNavigation();
     const route = useRoute();
     const isActive = route.name === 'UserPlayList';
+    const { changePlaylist } = useAudio();
+
+    const { songs, loading, error, refreshSongs } = useGetSongs('liked');
+
+    useFocusEffect(
+      useCallback(() => {
+        refreshSongs();
+      }, [])
+    );
   
     const handlePlaylistsPress = () => {
       if (isActive) {
@@ -20,10 +30,6 @@ export default function LibraryScreen() {
       }
     };
 
-  const songs = [
-    { id: "1", title: "Liked Song 1", artist: "Artist 1", image: require("../assets/note.jpg") },
-    { id: "2", title: "Liked Song 2", artist: "Artist 2", image: require("../assets/note.jpg") },
-  ];
 
 
   return (
@@ -42,10 +48,13 @@ export default function LibraryScreen() {
       />
       <Text style={styles.title}>Your Library</Text>
       <FlatList
-        data={songs}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <SongCard song={item} />}
-      />
+          data={songs}
+          keyExtractor={(item) => item.songId.toString()}
+          renderItem={({ item }) => <SongCard song={item} />}
+          ListEmptyComponent={() => (
+            <Text style={styles.emptyText}>No Liked Songs</Text>
+          )}
+        />
     </View>
   );
 }

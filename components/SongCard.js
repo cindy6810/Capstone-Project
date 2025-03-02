@@ -37,13 +37,7 @@ const SongCard = ({ song }) => {
       <View style={styles.songCardInfo}>
         <Text style={styles.songCardTitle}>{song.title}</Text>
         <Text style={styles.songCardArtist}>{song.artistName}</Text>
-        {isCurrentSong && (
-          <Ionicons 
-            name={isPlaying ? "pause-circle" : "play-circle"} 
-            size={24} 
-            color="#1DB954"
-          />
-        )}
+        {isCurrentSong }
       </View>
     </TouchableOpacity>
   );

@@ -8,7 +8,8 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native"; 
-import { signUpWithEmailAndPassword } from "../Utility/firebaseConfig"; 
+import { signUpWithEmailAndPassword } from "../Utility/firebaseConfig";
+import { authService } from "../services/authService";
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -30,7 +31,7 @@ export default function SignUpPage() {
     }
 
     try {
-      await signUpWithEmailAndPassword(email, password);  
+      await authService.registerUser(email, password, username);
       Alert.alert("Success", "User signed up successfully!");
       navigation.navigate("Login");
     } catch (error) {
