@@ -1,5 +1,5 @@
 const SongModel = require('../models/songModel');
-const { uploadToS3 } = require('../middleware/upload');
+const { uploadToS3, extractAudioMetadata} = require('../middleware/upload');
 
 const songController = {
   upload: async (req, res) => {
@@ -11,6 +11,7 @@ const songController = {
       }
 
       const songUrl = await uploadToS3(req.files.song[0], 'songs');
+      const metadata = await extractAudioMetadata(req.files.song[0].buffer);
 
       let coverUrl = null;
       if (req.files?.cover) {
@@ -21,9 +22,10 @@ const songController = {
         title: req.body.title || req.file.originalname.split('.')[0],
         artistName: req.body.artistName || 'Unknown Artist',
         genre: req.body.genre || 'Unknown Genre', 
-        duration: req.body.duration || 0,
+        duration: metadata.duration || 0,
         fileUrl: songUrl,
-        song_photo_url: coverUrl
+        song_photo_url: coverUrl,
+        user_id: req.user.uid
       };
 
       const result = await SongModel.create(songData);

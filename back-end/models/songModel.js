@@ -3,8 +3,8 @@ const db = require('../db');
 const SongModel = {
   create: async (songData) => {
     const sql = `
-      INSERT INTO songs (title, artistName, genre, fileUrl, duration, song_photo_url)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO songs (title, artistName, genre, fileUrl, duration, song_photo_url, user_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
     const params = [
       songData.title,
@@ -12,7 +12,8 @@ const SongModel = {
       songData.genre,
       songData.fileUrl,
       songData.duration,
-      songData.song_photo_url
+      songData.song_photo_url,
+      songData.user_id
     ];
     return await db.query(sql, params);
   },

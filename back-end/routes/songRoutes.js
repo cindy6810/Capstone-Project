@@ -7,11 +7,12 @@ const UserModel = require('../models/userModel');
 const db = require('../db');
 const likesController = require('../controllers/likesController');
 //upload song route
-router.post('/upload', upload, songController.upload);
+router.post('/upload', verifyToken, upload, songController.upload);
 
 router.get('/', songController.getAllSongs);
 router.get('/:id', songController.getSongById);
-    
+
+//like routes
 router.get('/:id/like', verifyToken, likesController.checkLike);
 router.post('/:id/like', verifyToken, likesController.toggleLike);
 
