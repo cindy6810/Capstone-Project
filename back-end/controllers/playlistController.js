@@ -17,14 +17,14 @@ const getAllPlaylists = async (req, res) => {
 // Controller to handle creating a new playlist
 const createPlaylist = async (req, res) => {
   try {
-    const { name, songs } = req.body;
+    const { title, songs } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ error: "Playlist name is required" });
+    if (!title) {
+      return res.status(400).json({ error: "Playlist title is required" });
     }
 
     // Insert playlist
-    const result = await db.query('INSERT INTO playlists (name) VALUES (?)', [name]);
+    const result = await db.query('INSERT INTO playlists (title) VALUES (?)', [title]);
     const playlistId = result.insertId;
 
     // Insert songs into playlist_songs table if provided

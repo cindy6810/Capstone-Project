@@ -158,7 +158,7 @@ export default function App() {
       <GestureHandlerRootView style={{ flex: 1 }}>
         <NavigationContainer>
           <View style={{ flex: 1 }}>
-            <Stack.Navigator initialRouteName="LoginFormPage" screenOptions={{ headerShown: false }}>
+            <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
               <Stack.Screen name="Home" component={TabNavigator} />
               <Stack.Screen 
                 name="SongDetail" 

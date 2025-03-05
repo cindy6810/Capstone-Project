@@ -10,7 +10,6 @@ const PlayList = ({ title, playlistId, image }) => {
     navigation.navigate("PlaylistDetail", {
       playlistId,
       title,
-      image
     });
   }
 
