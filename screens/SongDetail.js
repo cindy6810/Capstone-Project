@@ -18,7 +18,6 @@ const defaultCoverImage = require('../assets/note.jpg');
 export default function SongDetailScreen({ route }) {
   const { song } = route.params;
   const navigation = useNavigation();
-  const [sliderValue, setSliderValue] = useState(0);
   const SCREEN_HEIGHT = Dimensions.get('window').height;
   const translateY = useRef(new Animated.Value(0)).current;
   const { currentSong, isPlaying, playNextSong, playPreviousSong, playlist } = useAudio();
@@ -26,6 +25,13 @@ export default function SongDetailScreen({ route }) {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(song.likes || 0);
   const [isLikeLoading, setIsLikeLoading] = useState(false);
+  
+  useEffect(() => {
+    // If the current song doesn't match the displayed song and we have a current song
+    if (currentSong && song.songId !== currentSong.songId) {
+      navigation.replace('SongDetail', { song: currentSong });
+    }
+  }, [currentSong]);
 
   const handleNext = async () => {
     const currentIndex = playlist.findIndex(s => s.songId === song.songId);

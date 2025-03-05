@@ -1,8 +1,21 @@
 import { API_URL } from '../config/apiConfig';
 import { Platform } from 'react-native';
+import { auth } from '../Utility/firebaseConfig';
+
+const getAuthHeaders = async () => {
+  const user = auth.currentUser;
+  if (!user) return {};
+  
+  const token = await user.getIdToken();
+  return {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  };
+};
 
 export const songService = {
     uploadSong: async (formData) => {
+      const headers = await getAuthHeaders();
         try {
           if (!formData || !formData._parts || formData._parts.length === 0) {
             throw new Error('Invalid form data');
@@ -21,9 +34,8 @@ export const songService = {
           const response = await fetch(`${API_URL}/songs/upload`, {
             method: 'POST',
             body: formData,
-            headers: {
-              'Accept': 'application/json',
-            },
+            headers
+           
           });
     
           const responseText = await response.text();
