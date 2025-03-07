@@ -8,6 +8,9 @@ import { styles as globalStyles } from "../styles";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRoute } from '@react-navigation/native';
 import { auth } from '../Utility/firebaseConfig';
+import { playlistService } from '../services/playlistService';
+import { fetchAvailableSongs } from '../services/songService';
+
 
 const getAuthHeaders = async () => {
   const user = auth.currentUser;
@@ -32,22 +35,12 @@ const PlaylistDetail = () => {
   
   // Fetch playlist with its songs
   useEffect(() => {
-    setUserSongs([]);
-    const fetchPlaylist = async () => {
-      try {
-        const response = await fetch(`${API_URL}/playlists/${playlistId}`);
-        const data = await response.json();
-        if (response.ok) {
-          setUserSongs(data.songs); // Set the songs from the fetched playlist
-        } else {
-          console.log('Could not fetch playlist');
-        }
-      } catch (error) {
-        console.error(error);
-      }
+    const loadPlaylist = async () => {
+      const songs = await playlistService.fetchPlaylist(playlistId); // Call the service function to fetch songs
+      setUserSongs(songs); // Set the songs fetched from the service
     };
 
-    fetchPlaylist();
+    loadPlaylist();
   }, [playlistId]);
 
   const getSongCovers = () => {
@@ -78,59 +71,18 @@ const PlaylistDetail = () => {
 
   const handleAddSong = async () => {
     try {
-      
-      const response = await fetch(`${API_URL}/songs`);
-      const data = await response.json();
-      if (response.ok) {
-        console.log("Available Songs: ", data);
-        // Show the modal to select songs, instead of immediately adding them
-        setAvailableSongs(data);
-        setModalVisible(true); // Show modal after fetching songs
-      } else {
-        console.log("Could not fetch songs");
-      }
+      // Call the service function to fetch available songs
+      const songs = await playlistService.fetchAvailableSongsForModal(); 
+      setAvailableSongs(songs); // Update state with the fetched songs
+      setModalVisible(true); // Show modal after fetching songs
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching available songs:", error);
     }
   };
   
 
-  const handleAddToPlaylist = async (song) => {
-    try {
-
-      console.log("Song object:", song); // Debugging
-
-      if (!song || song.songId === undefined || song.songId === null) {
-        console.error("Invalid song object:", song);
-        return; // exit if song is invalid
-      }
-
-      const headers = await getAuthHeaders(); // Get the headers, including the Authorization token
-      const requestBody = {
-        songIds: [song.songId], // Ensure it's an array
-      };
-      const response = await fetch(`${API_URL}/playlists/${playlistId}/songs`, {
-        method: 'POST',
-        headers: {
-          ...headers, 
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(requestBody),
-
-      });
-      
-      console.log("Sending request with body:", requestBody);
-
-      if (response.ok) {
-        console.log(`Song added to playlist: ${song.title}`);
-        setUserSongs((prevSongs) => [...prevSongs, song]); // Update the UI by adding the song
-        setModalVisible(false); // Close the modal after adding
-      } else {
-        console.log('Failed to add song');
-      }
-    } catch (error) {
-      console.error(error);
-    }
+  const handleAddToPlaylist = (song) => {
+    playlistService.addSongToPlaylist(playlistId, song, setUserSongs, setModalVisible);
   };
   
 
