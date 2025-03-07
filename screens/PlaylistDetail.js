@@ -1,57 +1,122 @@
-import React from "react";
-import { View, Text, FlatList, StyleSheet, Image, TouchableOpacity } from "react-native";
-import { useRoute } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useState, useEffect } from "react";
+import { API_URL } from "../config/apiConfig";
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Modal,
+  Pressable,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import SongCard from "../components/SongCard";
-import { SafeAreaView } from 'react-native';
+import { SafeAreaView } from "react-native";
 import { styles as globalStyles } from "../styles";
-import { LinearGradient } from 'expo-linear-gradient';
+import { LinearGradient } from "expo-linear-gradient";
+import { useRoute } from "@react-navigation/native";
+import { auth } from "../Utility/firebaseConfig";
+import { playlistService } from "../services/playlistService";
 
-const defaultCoverImage = require('../assets/note.jpg');
+const getAuthHeaders = async () => {
+  const user = auth.currentUser;
+  if (!user) return {};
+
+  const token = await user.getIdToken();
+  return {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json",
+  };
+};
+
+const defaultCoverImage = require("../assets/note.jpg");
 
 const PlaylistDetail = () => {
   const route = useRoute();
-  const { playlistId, title, image, songs: playlistSongs = [] } = route.params;
+  const { playlistId, title, image } = route.params;
+  const [playlistSongs, setPlaylistSongs] = useState([]);
+  const [userSongs, setUserSongs] = useState();
+  const [availableSongs, setAvailableSongs] = useState([]);
 
-  // Use songs from params if available, otherwise use dummy songs
-  const songs = playlistSongs.length > 0 ? playlistSongs : [
-    { id: "1", title: "Song 1", artist: "Artist 1", image: require("../assets/graduation.jpg") },
-    { id: "2", title: "Song 2", artist: "Artist 2", image: require("../assets/graduation.jpg") },
-    { id: "3", title: "Song 3", artist: "Artist 3", image: require("../assets/graduation.jpg") },
-    { id: "4", title: "Song 4", artist: "Artist 4", image: require("../assets/note.jpg") },
-  ];
-  
+  const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
+
+  // Fetch playlist with its songs
+  useEffect(() => {
+    const loadPlaylist = async () => {
+      const songs = await playlistService.fetchPlaylist(playlistId); // Call the service function to fetch songs
+      setUserSongs(songs); // Set the songs fetched from the service
+      setPlaylistSongs(songs);
+    };
+
+    loadPlaylist();
+  }, [playlistId]);
+
   const getSongCovers = () => {
     const songCovers = [];
-    
-    if (songs && songs.length > 0) {
-      for (let i = 0; i < Math.min(songs.length, 4); i++) {
-        if (songs[i]?.song_photo_url) {
-          songCovers.push({ uri: songs[i].song_photo_url });
-        } else if (songs[i]?.image) {
-          songCovers.push(songs[i].image);
+
+    if (userSongs && userSongs.length > 0) {
+      for (let i = 0; i < Math.min(userSongs.length, 4); i++) {
+        if (userSongs[i]?.song_photo_url) {
+          songCovers.push({ uri: userSongs[i].song_photo_url });
+        } else if (userSongs[i]?.image) {
+          songCovers.push(userSongs[i].image);
         } else {
           songCovers.push(defaultCoverImage);
         }
       }
     }
-    
+
     while (songCovers.length < 4) {
       songCovers.push(defaultCoverImage);
     }
-    
+
     return songCovers;
   };
-  
+
   const songCovers = getSongCovers();
 
-  const handleAddSong = () => {
-    // Handle adding songs to playlist
+  // Add songs to the playlist
+
+  const handleAddSong = async () => {
+    try {
+      // Call the service function to fetch available songs
+      const songs = await playlistService.fetchAvailableSongsForModal();
+      setAvailableSongs(songs); // Update state with the fetched songs
+      setModalVisible(true); // Show modal after fetching songs
+    } catch (error) {
+      console.error("Error fetching available songs:", error);
+    }
+  };
+
+  // Function to remove a song from the playlist
+  const handleRemoveSong = async (songId) => {
+    try {
+      await playlistService.removeSongFromPlaylist(playlistId, songId);
+      setPlaylistSongs((prevSongs) =>
+        prevSongs.filter((song) => song.id !== songId)
+      ); // Remove song from state
+    } catch (error) {
+      console.error("Error removing song:", error);
+    }
+  };
+
+  // Function to check if a song is already in the playlist
+  const isSongInPlaylist = (songId) => {
+    return playlistSongs.some((song) => song.id === songId);
+  };
+
+  const handleAddToPlaylist = (song) => {
+    playlistService.addSongToPlaylist(
+      playlistId,
+      song,
+      setUserSongs,
+      setModalVisible
+    );
   };
 
   const renderHeader = () => (
     <>
-      {/* Replace single image with grid layout */}
       <View style={styles.artworkContainer}>
         <View style={styles.artworkRow}>
           <Image source={songCovers[0]} style={styles.artworkQuadrant} />
@@ -66,13 +131,14 @@ const PlaylistDetail = () => {
       <View style={styles.headerContainer}>
         <Text style={styles.playlistTitle}>{title}</Text>
         <TouchableOpacity onPress={handleAddSong}>
-           <LinearGradient
-                    colors={['#111', '#333']} 
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.addButton}>
-          <Ionicons name="add-circle-outline" size={24} color="#f1f1f1" />
-          <Text style={styles.addButtonText}>Add Songs</Text>
+          <LinearGradient
+            colors={["#111", "#333"]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.addButton}
+          >
+            <Ionicons name="add-circle-outline" size={24} color="#f1f1f1" />
+            <Text style={styles.addButtonText}>Add Songs</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -83,13 +149,87 @@ const PlaylistDetail = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <FlatList
-          data={songs}
+          data={userSongs}
           ListHeaderComponent={renderHeader}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) =>
+            item.id?.toString() || `playlist-song-${index}`
+          }
           renderItem={({ item }) => <SongCard song={item} />}
           contentContainerStyle={styles.contentContainer}
         />
       </View>
+
+      {/* Modal for adding songs */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalHeader}>Select Songs to Add</Text>
+            <FlatList
+              data={availableSongs}
+              keyExtractor={(item, index) => item?.id?.toString() || `fallback-id-${index}`}
+              renderItem={({ item }) => (
+                <View
+                  style={[
+                    styles.songItem,
+                    isSongInPlaylist(item.id) && styles.greyedOut,
+                  ]}
+                >
+                  <Text style={styles.songTitle}>
+                    {item.title} - {item.artist}
+                  </Text>
+                  {/* Display Add Button if song is not in playlist */}
+                  {!isSongInPlaylist(item.id) && (
+                    <TouchableOpacity onPress={() => handleAddToPlaylist(item)}>
+                      <Ionicons name="add-circle" size={24} color="#28a745" />
+                    </TouchableOpacity>
+                  )}
+                  {/* Display Three-Dot Icon if song is in playlist */}
+                  {isSongInPlaylist(item.id) && (
+                    <TouchableOpacity onPress={() => handleRemoveSong(item.id)}>
+                      <Ionicons
+                        name="ellipsis-vertical"
+                        size={24}
+                        color="#ff0000"
+                      />
+                    </TouchableOpacity>
+                  )}
+                </View>
+              )}
+            />
+
+            <FlatList
+              data={playlistSongs}
+              keyExtractor={(item, index) => item?.id?.toString() || `fallback-id-${index}`}
+              renderItem={({ item }) => (
+                <View style={styles.songItem}>
+                  <Text style={styles.songTitle}>
+                    {item.title} - {item.artist}
+                  </Text>
+                  <TouchableOpacity onPress={() => handleRemoveSong(item.id)}>
+                    <Ionicons
+                      name="ellipsis-vertical"
+                      size={24}
+                      color="#ff0000"
+                    />
+                  </TouchableOpacity>
+                </View>
+              )}
+            />
+
+            <Pressable
+              style={styles.closeButton}
+              onPress={() => setModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -103,24 +243,24 @@ const styles = StyleSheet.create({
   artworkContainer: {
     width: 200,
     height: 200,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginVertical: 20,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   artworkRow: {
-    flexDirection: 'row',
-    height: '50%',
+    flexDirection: "row",
+    height: "50%",
   },
   artworkQuadrant: {
-    width: '50%',
-    height: '100%',
-    resizeMode: 'cover',
+    width: "50%",
+    height: "100%",
+    resizeMode: "cover",
   },
   headerContainer: {
     padding: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   playlistTitle: {
     fontSize: 24,
@@ -128,9 +268,9 @@ const styles = StyleSheet.create({
     color: "#f1f1f1",
   },
   addButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
     padding: 10,
     borderRadius: 20,
   },
@@ -144,6 +284,44 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "rgb(4, 4, 4)",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "flex-end",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "rgb(4,4,4)",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#f1f1f1",
+    marginBottom: 15,
+  },
+  songItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  songTitle: {
+    color: "#f1f1f1",
+    fontSize: 16,
+  },
+  closeButton: {
+    marginTop: 15,
+    padding: 10,
+    backgroundColor: "#444",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  closeButtonText: {
+    color: "#f1f1f1",
+    fontSize: 16,
   },
 });
 
