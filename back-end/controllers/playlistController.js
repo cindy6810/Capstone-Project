@@ -79,8 +79,28 @@ const playlistController = {
     }
   },
 
+  // Fetch songs to show the user
+ getUserSongs: async(req, res) => {
+    const { user_id } = req.params
+    try {
+        const songs = await db.query(
+          `SELECT id, title, artist, file_url 
+            FROM Songs 
+            WHERE user_id = ?`, 
+            [user_id]
+        );
+
+        res.status(200).json(songs)
+    } catch (error) {
+        console.error(error)
+    }
+ },
+
   addSongsToPlaylist: async (req, res) => {
     try {
+      console.log("Received request body:", req.body);
+console.log("Playlist ID:", req.params.playlistId);
+
       const { playlistId } = req.params;
       const { songIds } = req.body;
       

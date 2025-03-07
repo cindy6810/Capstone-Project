@@ -38,8 +38,14 @@ const PlaylistModel = {
   addSongs: async (playlistId, songIds) => {
     if (!songIds.length) return { insertId: 0 };
     
-    const values = songIds.map(songId => [playlistId, songId]);
-    return await db.query('INSERT INTO playlist_songs (playlist_id, song_id) VALUES ?', [values]);
+    const values = songIds.map(songId => [playlistId, songId]); 
+    const placeholders = values.map(() => "(?, ?)").join(", "); // Generates (?, ?), (?, ?), ...
+    const flattenedValues = values.flat(); // Flattens the array for binding
+
+    return await db.query(
+        `INSERT INTO playlist_songs (playlist_id, song_id) VALUES ${placeholders}`,
+        flattenedValues
+    );
   },
 
   getSongs: async (playlistId) => {

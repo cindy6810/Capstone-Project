@@ -83,13 +83,13 @@ export const playlistService = {
     }
   },
 
-  addSongsToPlaylist: async (playlistId, songIds) => {
+  addSongsToPlaylist: async (playlistId, song_id) => {
     try {
       const headers = await getAuthHeaders();
       const response = await fetch(`${API_URL}/playlists/${playlistId}/songs`, {
         method: 'POST',
         headers,
-        body: JSON.stringify({ songIds })
+        body: JSON.stringify({ song_id })
       });
       if (!response.ok) throw new Error('Failed to add songs to playlist');
       return await response.json();
