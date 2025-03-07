@@ -81,13 +81,13 @@ const playlistController = {
 
   // Fetch songs to show the user
  getUserSongs: async(req, res) => {
-    const { user_id } = req.params
+    const { playlistId } = req.params
     try {
         const songs = await db.query(
           `SELECT id, title, artist, file_url 
             FROM Songs 
             WHERE user_id = ?`, 
-            [user_id]
+            [playlistId]
         );
 
         res.status(200).json(songs)

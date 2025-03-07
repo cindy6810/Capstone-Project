@@ -13,7 +13,7 @@ router.get('/user', verifyToken, playlistController.getUserPlaylists);
 // Routes with parameters must come AFTER specific routes
 router.get('/:id', playlistController.getPlaylistById);
 router.post('/', verifyToken, playlistController.createPlaylist);
-router.get('/:user_id',playlistController.getUserSongs);
+router.get('/:playlistId',playlistController.getUserSongs);
 router.post('/:playlistId/songs', verifyToken, playlistController.addSongsToPlaylist);
 router.delete('/:playlistId/songs/:songId', verifyToken, playlistController.removeSongFromPlaylist);
 router.delete('/:id', verifyToken, playlistController.deletePlaylist);

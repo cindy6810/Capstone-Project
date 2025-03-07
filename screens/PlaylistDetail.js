@@ -26,10 +26,13 @@ const PlaylistDetail = () => {
   const route = useRoute();
   const { playlistId, title, image } = route.params;
   const [userSongs, setUserSongs] = useState();
+  const [availableSongs, setAvailableSongs] = useState([]);
+
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
   
   // Fetch playlist with its songs
   useEffect(() => {
+    setUserSongs([]);
     const fetchPlaylist = async () => {
       try {
         const response = await fetch(`${API_URL}/playlists/${playlistId}`);
@@ -81,7 +84,7 @@ const PlaylistDetail = () => {
       if (response.ok) {
         console.log("Available Songs: ", data);
         // Show the modal to select songs, instead of immediately adding them
-        setUserSongs(data);
+        setAvailableSongs(data);
         setModalVisible(true); // Show modal after fetching songs
       } else {
         console.log("Could not fetch songs");
@@ -166,7 +169,7 @@ const PlaylistDetail = () => {
         <FlatList
           data={userSongs}
           ListHeaderComponent={renderHeader}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item, index) => item.id?.toString() || `playlist-song-${index}`}
           renderItem={({ item }) => <SongCard song={item} />}
           contentContainerStyle={styles.contentContainer}
         />
@@ -183,8 +186,8 @@ const PlaylistDetail = () => {
           <View style={styles.modalContent}>
             <Text style={styles.modalHeader}>Select Songs to Add</Text>
             <FlatList
-              data={userSongs}
-              keyExtractor={(item) => item.id}
+              data={availableSongs}
+              keyExtractor={(item, index) => item.id?.toString() || `modal-song-${index}`}
               renderItem={({ item }) => (
                 <View style={styles.songItem}>
                   <Text style={styles.songTitle}>{item.title} - {item.artist}</Text>
