@@ -10,7 +10,9 @@ const likesController = require('../controllers/likesController');
 router.post('/upload', verifyToken, upload, songController.upload);
 
 router.get('/', songController.getAllSongs);
+router.get('/myUploads', verifyToken, songController.getMyUploads);
 router.get('/:id', songController.getSongById);
+
 
 //like routes
 router.get('/:id/like', verifyToken, likesController.checkLike);

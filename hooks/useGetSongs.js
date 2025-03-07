@@ -20,10 +20,17 @@ export const useGetSongs = (source = 'all') => {
         default:
           data = await songService.getAllSongs();
           break;
+          
+          case 'liked':
+            data = await likesService.getLikedSongs();
+            break;
 
-        case 'liked':
-          data = await likesService.getLikedSongs();
-          break;
+          case 'my-uploads':
+            data = await songService.getMyUploads();
+            break;
+          
+        
+
       }
       
       setSongs(data);

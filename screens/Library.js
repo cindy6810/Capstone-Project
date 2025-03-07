@@ -4,15 +4,11 @@ import { styles } from "../styles";
 import { useNavigation, useRoute, useFocusEffect } from "@react-navigation/native";
 import { StyleSheet} from "react-native";
 import SongCard from "../components/SongCard";
-import NavButton from "../components/PlayListButton";
+import PlaylistButton from "../components/PlayListButton";
 import { useGetSongs } from "../hooks/useGetSongs";
-import { useAudio } from "../context/AudioContext";
+import MyUploadButton from '../components/MyUploadButton';
 
 export default function LibraryScreen() {
-  const navigation = useNavigation();
-    const route = useRoute();
-    const isActive = route.name === 'UserPlayList';
-    const { changePlaylist } = useAudio();
 
     const { songs, loading, error, refreshSongs } = useGetSongs('liked');
 
@@ -22,30 +18,12 @@ export default function LibraryScreen() {
       }, [])
     );
   
-    const handlePlaylistsPress = () => {
-      if (isActive) {
-        navigation.goBack();
-      } else {
-        navigation.navigate('UserPlayList');
-      }
-    };
-
-
-
   return (
     <View style={styles.container}>
-      <NavButton 
-        title="Playlists" 
-        onPress={handlePlaylistsPress}
-        style={[
-          libraryStyles.button,
-          isActive && libraryStyles.activeButton
-        ]}
-        textStyle={[
-          libraryStyles.buttonText,
-          isActive && libraryStyles.activeButtonText
-        ]}
-      />
+      <View style={libraryStyles.buttonContainer}>
+      <PlaylistButton />
+      <MyUploadButton />
+      </View>
       <Text style={styles.title}>Your Library</Text>
       <FlatList
           data={songs}
@@ -65,9 +43,18 @@ const libraryStyles = StyleSheet.create({
     backgroundColor: "rgba(42, 42, 42, 0.7)",
     paddingVertical: 10,
     paddingHorizontal: 20,
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 10,
-    marginBottom: 15,
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    marginBottom: 5,
+    width: '100%',
+    gap: 10,
+  },
+  
   activeButton: {
     backgroundColor: "#1DB954",
   },

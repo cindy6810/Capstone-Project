@@ -46,9 +46,7 @@ export const likesService = {
       });
       
       if (!response.ok) {
-        // Log the actual error response for debugging
-        const text = await response.text();
-        console.error(`API error (${response.status}):`, text.substring(0, 100));
+        console.error(`response error`, error);
         return { liked: false };
       }
       

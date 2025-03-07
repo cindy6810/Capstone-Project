@@ -28,6 +28,8 @@ import PlayListButton from "./components/PlayListButton";
 import CommentScreen from "./screens/CommentScreen";
 import TopBarProfileIcon from './components/TopBarProfileIcon';
 import FloatingPlayer from './components/FloatingPlayer';
+import MyUploads from './screens/MyUploads';
+import MyUploadButton from './components/MyUploadButton';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -66,8 +68,27 @@ function UserPlayListWithTopBar({ navigation }) {
   return (
     <ScreenWithTopBar navigation={navigation} title="Playlists">
       <View style={styles.container}>
-      <PlayListButton title="Playlists" />
+      <View style={styles.buttonContainer}>
+          <PlayListButton title="Playlists" />
+          <MyUploadButton title="My Uploads" />
+        </View>
+
       <UserPlayList />
+      </View>
+    </ScreenWithTopBar>
+  );
+}
+
+function MyUploadsWithTopBar({ navigation }) {
+  return (
+    <ScreenWithTopBar navigation={navigation} title="My Uploads">
+      <View style={styles.container}>
+        <View style={styles.buttonContainer}>
+          <PlayListButton title="Playlists" />
+          <MyUploadButton title="My Uploads" />
+        </View>
+        
+        <MyUploads />
       </View>
     </ScreenWithTopBar>
   );
@@ -91,6 +112,14 @@ function LibraryStack() {
       <Stack.Screen 
         name="UserPlayList" 
         component={UserPlayListWithTopBar}
+        options={{
+          presentation: 'card',
+          animationEnabled: true
+        }}
+      />
+       <Stack.Screen 
+        name="MyUploads" 
+        component={MyUploadsWithTopBar}
         options={{
           presentation: 'card',
           animationEnabled: true
@@ -195,6 +224,7 @@ export default function App() {
               <Stack.Screen name="LoginFormPage" component={LoginFormPage} />
               <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="Upload" component={UploadScreen} />
+              <Stack.Screen name="MyUploads" component={MyUploads} />
             </Stack.Navigator>
             <FloatingPlayer />
           </View>

@@ -10,7 +10,7 @@ export const AudioProvider = ({ children }) => {
   const [playlist, setPlaylist] = useState([]);
   const [playlistSource, setPlaylistSource] = useState('all');
   
-  // Use ref to track current song reliably across renders
+  // Use ref to track current song 
   const currentSongRef = useRef(null);
   
   // Update ref whenever currentSong changes
@@ -24,7 +24,7 @@ export const AudioProvider = ({ children }) => {
   };
 
   const playNextSong = async () => {
-    // Use the ref for reliable current song reference
+    // Use the ref for current song reference
     const currentSongValue = currentSongRef.current;
     
     if (!currentSongValue || playlist.length === 0) return;
@@ -117,7 +117,6 @@ export const AudioProvider = ({ children }) => {
     
     // If song finished
     if (status.didJustFinish) {
-      // Use the ref for reliable reference
       const songJustFinished = currentSongRef.current;
       
       if (songJustFinished && playlist.length > 0) {
@@ -129,7 +128,7 @@ export const AudioProvider = ({ children }) => {
           // Use timeout to ensure proper cleanup between tracks
           setTimeout(() => {
             playSound(nextSong);
-          }, 300);
+          }, 500);
         }
       }
     }

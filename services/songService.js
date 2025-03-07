@@ -82,7 +82,33 @@ export const songService = {
       console.error('Fetch song error:', error);
       throw error;
     }
+  },
+
+  getMyUploads: async () => {
+    try {
+      const headers = await getAuthHeaders();
+      
+      // Check if user is authenticated
+      if (!auth.currentUser) {
+        throw new Error('User not authenticated');
+      }
+      
+      const response = await fetch(`${API_URL}/songs/myUploads`, {
+        method: 'GET',
+        headers
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to fetch uploads: ${errorText}`);
+      }
+      
+      return await response.json();
+    } catch (error) {
+      console.error('Fetch my uploads error:', error);
+      throw error;
+    }
   }
+};
 
   
-};

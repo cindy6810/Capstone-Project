@@ -267,6 +267,56 @@ export const styles = StyleSheet.create({
     fontSize: 18,
     marginLeft: 5,
   },
+  playlistCoverGrid: {
+    width: '100%',
+    height: 180,
+    borderRadius: 8,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  
+  playlistCoverRow: {
+    flexDirection: 'row',
+    width: '100%',
+    height: '50%',
+  },
+  
+  playlistCoverQuadrant: {
+    width: '50%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  
+  playlistOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 10,
+    justifyContent: 'flex-end',
+  },
+  
+  playlistIndicator: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    borderRadius: 16,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 10,
+    marginBottom: 5,
+    width: '100%',
+    gap: 10,
+  },
+
 
   // Playlist Styles
   modalContainer: {

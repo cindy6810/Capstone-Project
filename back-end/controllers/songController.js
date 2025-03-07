@@ -62,7 +62,24 @@ const songController = {
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch songs' });
     }
+  },
+
+getMyUploads: async (req, res) => {
+  try {
+    const userId = req.user.uid;
+    
+    if (!userId) {
+      return res.status(401).json({ error: 'User not authenticated' });
+    }
+
+    const uploads = await SongModel.getByUserId(userId);
+    
+    res.json(uploads);
+  } catch (error) {
+    console.error('Error fetching uploads:', error);
+    res.status(500).json({ error: 'Failed to fetch user uploads' });
   }
+}
 };
 
 module.exports = songController;

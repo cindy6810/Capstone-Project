@@ -26,6 +26,17 @@ const SongModel = {
     const sql = 'SELECT * FROM songs WHERE songId = ?';
     const results = await db.query(sql, [songId]);
     return results[0];
+  },
+
+  getByUserId: async (userId) => {
+    try {
+      const sql = 'SELECT * FROM songs WHERE user_id = ? ORDER BY songId DESC';
+      const results = await db.query(sql, [userId]);
+      return results;
+    } catch (error) {
+      console.error('Error fetching user songs:', error);
+      throw error;
+    }
   }
 };
 

@@ -1,115 +1,129 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Alert, Modal, TextInput, ScrollView } from "react-native";
+import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Alert, Modal, TextInput } from "react-native";
 import { styles } from "../styles";
 import PlayList from "../components/Playlist";
 import { Ionicons } from '@expo/vector-icons';
+import { playlistService } from "../services/playlistService";
+import { useFocusEffect } from '@react-navigation/native';
+import { songService } from "../services/songService";
 
-export default function UserPlayList() {
+export default function UserPlayList({ navigation }) {
   const [playlists, setPlaylists] = useState([]);
-  const [songs, setSongs] = useState([]); // List of songs from the database
+  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [playlistTitle, setPlaylistTitle] = useState("");
+  const [availableSongs, setAvailableSongs] = useState([]);
   const [selectedSongs, setSelectedSongs] = useState([]);
 
-  // Fetch playlists from backend
-  useEffect(() => {
-    const fetchPlaylists = async () => {
-      try {
-        const response = await fetch('http://172.20.10.3:3000/api/playlists');
-        const data = await response.json();
-        
-        if (response.ok) {
-          setPlaylists(data);
-        } else {
-          Alert.alert('Error', 'Failed to load playlists');
-        }
-      } catch (error) {
-        console.error('Error fetching playlists:', error);
-        Alert.alert('Error', 'Failed to fetch playlists');
-      }
-    };
+  // Fetch playlists when screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPlaylists();
+      fetchAvailableSongs();
+      return () => {};
+    }, [])
+  );
 
-    fetchPlaylists();
-  }, []);
+  // Fetch user's playlists
+  const fetchPlaylists = async () => {
+    try {
+      setLoading(true);
+      const data = await playlistService.getUserPlaylists();
+      setPlaylists(data);
+    } catch (error) {
+      console.error('Error fetching playlists:', error);
+      Alert.alert('Error', 'Failed to load your playlists');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Fetch songs from backend
-  useEffect(() => {
-    const fetchSongs = async () => {
-      try {
-        const response = await fetch('http://172.20.10.3:3000/api/playlists');
-        const data = await response.json();
-        
-        if (response.ok) {
-          setSongs(data);
-        } else {
-          Alert.alert('Error', 'Failed to load songs');
-        }
-      } catch (error) {
-        console.error('Error fetching songs:', error);
-        Alert.alert('Error', 'Failed to fetch songs');
-      }
-    };
-
-    fetchSongs();
-  }, []);
+  // Fetch available songs for playlist creation
+  const fetchAvailableSongs = async () => {
+    try {
+      const songs = await songService.getAllSongs();
+      setAvailableSongs(songs);
+    } catch (error) {
+      console.error('Error fetching songs:', error);
+    }
+  };
 
   // Toggle song selection
-  const toggleSelectSong = (songId) => {
-    setSelectedSongs((prevSelected) =>
+  const toggleSongSelection = (songId) => {
+    setSelectedSongs(prevSelected =>
       prevSelected.includes(songId)
-        ? prevSelected.filter((id) => id !== songId)
+        ? prevSelected.filter(id => id !== songId)
         : [...prevSelected, songId]
     );
   };
 
-  // Handle creating a new playlist
+  // Create new playlist
   const handleCreatePlaylist = async () => {
-    setModalVisible(true);
-  };
-
-  const handleSubmitPlaylist = async () => {
-    if (!playlistTitle.trim()) {
-      Alert.alert("Error", "Playlist title cannot be empty");
+    if (playlistTitle.trim() === '') {
+      Alert.alert('Error', 'Please enter a playlist title');
       return;
     }
 
     try {
-      const newPlaylist = {
+      setLoading(true);
+      const result = await playlistService.createPlaylist({
         title: playlistTitle,
-        songs: selectedSongs, // Send selected song IDs
-      };
-
-      const response = await fetch('http://172.20.10.3:3000/api/playlists', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newPlaylist),
+        songs: selectedSongs
       });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setPlaylists((prevPlaylists) => [
-          ...prevPlaylists,
-          { id: data.id, title: playlistTitle, image: require("../assets/graduation.jpg") },
-        ]);
-        Alert.alert('Success', 'New playlist created!');
-        setModalVisible(false);
-        setPlaylistTitle("");
-        setSelectedSongs([]);
-      } else {
-        Alert.alert('Error', 'Failed to create playlist');
-      }
+      
+      Alert.alert('Success', 'Playlist created successfully');
+      setModalVisible(false);
+      setPlaylistTitle('');
+      setSelectedSongs([]);
+      
+      // Refresh playlists to show the new one
+      fetchPlaylists();
     } catch (error) {
       console.error('Error creating playlist:', error);
       Alert.alert('Error', 'Failed to create playlist');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  // Handle playlist selection
+  const handlePlaylistPress = (playlistId) => {
+    navigation.navigate('PlaylistDetails', { playlistId });
+  };
+
+  // Delete playlist
+  const handleDeletePlaylist = async (playlistId) => {
+    Alert.alert(
+      'Confirm Delete',
+      'Are you sure you want to delete this playlist?',
+      [
+        { text: 'Cancel' },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              setLoading(true);
+              await playlistService.deletePlaylist(playlistId);
+              fetchPlaylists();
+            } catch (error) {
+              console.error('Error deleting playlist:', error);
+              Alert.alert('Error', 'Failed to delete playlist');
+            } finally {
+              setLoading(false);
+            }
+          }
+        }
+      ]
+    );
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Your Playlists</Text>
+      
+      {loading && <Text style={styles.loadingText}>Loading...</Text>}
+      
       <FlatList
         data={playlists}
         keyExtractor={(item) => item.id.toString()}
@@ -117,49 +131,67 @@ export default function UserPlayList() {
           <PlayList
             title={item.title}
             playlistId={item.id}
-            image={item.image}
+            image={require("../assets/graduation.jpg")}
+            onPress={() => handlePlaylistPress(item.id)}
+            onDelete={() => handleDeletePlaylist(item.id)}
           />
         )}
-        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={
+          !loading && (
+            <Text style={styles.emptyListText}>
+              You don't have any playlists yet. Create one!
+            </Text>
+          )
+        }
       />
+
+      {/* Create Playlist Button */}
       <TouchableOpacity
         style={styles.fabButton}
-        onPress={handleCreatePlaylist}
+        onPress={() => setModalVisible(true)}
+        disabled={loading}
       >
-        <Ionicons name="add" size={24} color="black" />
-        <Text style={styles.fabButtonText}>New</Text>
+        <Ionicons name="add" size={24} color="white" />
+        <Text style={styles.fabButtonText}>New Playlist</Text>
       </TouchableOpacity>
 
-      {/* Modal for creating playlist */}
-      <Modal visible={modalVisible} animationType="slide" transparent={true}>
+      {/* Create Playlist Modal */}
+      <Modal
+        visible={modalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>Create New Playlist</Text>
+            
             <TextInput
               style={styles.input}
-              placeholder="Enter playlist title"
+              placeholder="Playlist title"
               value={playlistTitle}
               onChangeText={setPlaylistTitle}
             />
-            
-            <Text style={styles.modalSubtitle}>Select Songs</Text>
-            <ScrollView>
-              {songs.map((song) => (
-                <TouchableOpacity
-                  key={song.id}
-                  style={[styles.songItem, selectedSongs.includes(song.id) && styles.songItemSelected]}
-                  onPress={() => toggleSelectSong(song.id)}
-                >
-                  <Text style={styles.songTitle}>{song.title} - {song.artist}</Text>
-                </TouchableOpacity>
-              ))}
-            </ScrollView>
 
-            <TouchableOpacity style={styles.createButton} onPress={handleSubmitPlaylist}>
-              <Text style={styles.createButtonText}>Create Playlist</Text>
+            <TouchableOpacity
+              style={styles.createButton}
+              onPress={handleCreatePlaylist}
+              disabled={loading}
+            >
+              <Text style={styles.buttonText}>
+                {loading ? 'Creating...' : 'Create Playlist'}
+              </Text>
             </TouchableOpacity>
-
-            <TouchableOpacity style={styles.cancelButton} onPress={() => setModalVisible(false)}>
+            
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={() => {
+                setModalVisible(false);
+                setPlaylistTitle('');
+                setSelectedSongs([]);
+              }}
+              disabled={loading}
+            >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
