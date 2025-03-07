@@ -156,20 +156,21 @@ addSongToPlaylist: async (playlistId, song, setUserSongs, setModalVisible) => {
     console.error(error);
   }
 },
-  removeSongFromPlaylist: async (playlistId, songId) => {
-    try {
-      const headers = await getAuthHeaders();
-      const response = await fetch(`${API_URL}/playlists/${playlistId}/songs/${songId}`, {
-        method: 'DELETE',
-        headers
-      });
-      if (!response.ok) throw new Error('Failed to remove song from playlist');
-      return await response.json();
-    } catch (error) {
-      console.error('Remove song from playlist error:', error);
-      throw error;
-    }
-  },
+removeSongFromPlaylist: async (playlistId, songId) => {
+  try {
+    const headers = await getAuthHeaders();
+    const response = await fetch(`${API_URL}/playlists/${playlistId}/songs/${songId}`, {
+      method: 'DELETE',
+      headers,
+    });
+
+    if (!response.ok) throw new Error('Failed to remove song from playlist');
+    return await response.json();
+  } catch (error) {
+    console.error('Remove song from playlist error:', error);
+    throw error;
+  }
+},
 
   deletePlaylist: async (id) => {
     try {
