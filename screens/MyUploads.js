@@ -17,7 +17,7 @@ export default function MyUploads() {
             keyExtractor={(item) => item.songId.toString()}
             renderItem={({ item }) => <SongCard song={item} />}
             ListEmptyComponent={() => (
-                <Text style={styles.emptyText}>No Liked Songs</Text>
+                <Text style={styles.emptyText}>No Uploaded Songs</Text>
             )}
             />
         

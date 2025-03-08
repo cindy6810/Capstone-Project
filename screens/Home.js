@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import { Text, View, FlatList, ActivityIndicator } from "react-native";
 import { styles } from "../styles";
 import { useFocusEffect } from "@react-navigation/native";
@@ -7,15 +7,15 @@ import SongCard2 from "../components/SongCard2";
 import PlayList from "../components/Playlist";
 import { useGetSongs } from "../hooks/useGetSongs";
 import { useAudio } from "../context/AudioContext";
+import { playlistService } from "../services/playlistService";
 
 export default function HomeScreen() {
   const { songs, loading, error, refreshSongs } = useGetSongs();
   const { changePlaylist } = useAudio();
+  const [playlists, setPlaylists] = useState([]);
+  const [playlistsLoading, setPlaylistsLoading] = useState(true);
 
-  const playlists = [
-    { id: "1", title: "My Playlist 1", image: require("../assets/graduation.jpg") },
-    { id: "2", title: "My Playlist 2", image: require("../assets/graduation.jpg") },
-  ];
+
 
   // Filtered song categories (Replace with your actual logic)
   const newReleases = songs.slice(0, 10);
@@ -28,6 +28,27 @@ export default function HomeScreen() {
   useFocusEffect(
     useCallback(() => {
       refreshSongs();
+    }, [])
+  );
+
+  useFocusEffect(
+    useCallback(() => {
+      refreshSongs();
+      
+      // Add this function to fetch playlists
+      const fetchPlaylists = async () => {
+        try {
+          setPlaylistsLoading(true);
+          const playlistData = await playlistService.getAllPlaylists();
+          setPlaylists(playlistData);
+        } catch (error) {
+          console.error('Error fetching playlists:', error);
+        } finally {
+          setPlaylistsLoading(false);
+        }
+      };
+      
+      fetchPlaylists();
     }, [])
   );
 
@@ -69,23 +90,34 @@ export default function HomeScreen() {
       {renderHorizontalList("Pop Songs", popSongs)}
       {renderHorizontalList("Recommended for Today", recommendedSongs)}
 
-      <Text style={styles.subtitle}>Your Playlists</Text>
+      <Text style={styles.subtitle}>Playlists</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={playlists}
-        ListHeaderComponent={renderHeader}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <PlayList title={item.title} playlistId={item.id} image={item.image} />
-        )}
-        showsVerticalScrollIndicator={false}
-        onRefresh={refreshSongs}
-        refreshing={loading}
-      />
+      {playlistsLoading ? (
+        <ActivityIndicator size="large" color="#f1f1f1" />
+      ) : (
+        <FlatList
+          data={playlists}
+          ListHeaderComponent={renderHeader}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <PlayList 
+              title={item.title} 
+              playlistId={item.id} 
+              songs={item.songs || []}
+              // Use a default image if none is provided
+              image={item.image ? { uri: item.image } : require("../assets/graduation.jpg")} 
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          onRefresh={refreshSongs}
+          refreshing={loading}
+          ListEmptyComponent={<Text style={styles.emptyText}>No playlists available</Text>}
+        />
+      )}
       {error && <Text style={styles.errorText}>Error loading songs: {error}</Text>}
     </View>
   );

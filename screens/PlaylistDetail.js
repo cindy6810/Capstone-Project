@@ -38,7 +38,6 @@ const PlaylistDetail = () => {
   const [playlistSongs, setPlaylistSongs] = useState([]);
   const [userSongs, setUserSongs] = useState();
   const [availableSongs, setAvailableSongs] = useState([]);
-
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
 
   // Fetch playlist with its songs
@@ -90,12 +89,25 @@ const PlaylistDetail = () => {
   };
 
   // Function to remove a song from the playlist
-  const handleRemoveSong = async (songId) => {
+  const handleRemoveSong = async (playlistId, songId) => {
     try {
+      console.log("Removing song with ID:", songId);
       await playlistService.removeSongFromPlaylist(playlistId, songId);
-      setPlaylistSongs((prevSongs) =>
-        prevSongs.filter((song) => song.id !== songId)
-      ); // Remove song from state
+      
+      // Update userSongs - this is what the FlatList displays
+      setUserSongs((prevSongs) => 
+        prevSongs.filter((song) => {
+          const songIdentifier = song.id || song.songId;
+          return songIdentifier !== songId;
+        })
+      );
+      
+      setPlaylistSongs((prevSongs) => 
+        prevSongs.filter((song) => {
+          const songIdentifier = song.id || song.songId;
+          return songIdentifier !== songId;
+        })
+      );
     } catch (error) {
       console.error("Error removing song:", error);
     }
@@ -103,7 +115,11 @@ const PlaylistDetail = () => {
 
   // Function to check if a song is already in the playlist
   const isSongInPlaylist = (songId) => {
-    return playlistSongs.some((song) => song.id === songId);
+    return playlistSongs.some((song) => {
+      // Check both possible ID properties
+      const playlistSongId = song.id || song.songId;
+      return playlistSongId === songId;
+    });
   };
 
   const handleAddToPlaylist = (song) => {
@@ -154,7 +170,14 @@ const PlaylistDetail = () => {
           keyExtractor={(item, index) =>
             item.id?.toString() || `playlist-song-${index}`
           }
-          renderItem={({ item }) => <SongCard song={item} />}
+          renderItem={({ item }) => (
+            <SongCard
+              song={item}
+              playlistId={playlistId} // Pass the playlist ID
+              showOptions={true}
+              onRemove={handleRemoveSong}
+            />
+          )}
           contentContainerStyle={styles.contentContainer}
         />
       </View>
@@ -171,12 +194,14 @@ const PlaylistDetail = () => {
             <Text style={styles.modalHeader}>Select Songs to Add</Text>
             <FlatList
               data={availableSongs}
-              keyExtractor={(item, index) => item?.id?.toString() || `fallback-id-${index}`}
+              keyExtractor={(item, index) =>
+                item?.id?.toString() || `fallback-id-${index}`
+              }
               renderItem={({ item }) => (
                 <View
                   style={[
                     styles.songItem,
-                    isSongInPlaylist(item.id) && styles.greyedOut,
+                    isSongInPlaylist(item.id) && styles.greyedOut, // Apply greyed-out style for songs already in the playlist
                   ]}
                 >
                   <Text style={styles.songTitle}>
@@ -188,35 +213,20 @@ const PlaylistDetail = () => {
                       <Ionicons name="add-circle" size={24} color="#28a745" />
                     </TouchableOpacity>
                   )}
-                  {/* Display Three-Dot Icon if song is in playlist */}
-                  {isSongInPlaylist(item.id) && (
-                    <TouchableOpacity onPress={() => handleRemoveSong(item.id)}>
-                      <Ionicons
-                        name="ellipsis-vertical"
-                        size={24}
-                        color="#ff0000"
-                      />
-                    </TouchableOpacity>
-                  )}
                 </View>
               )}
             />
 
             <FlatList
               data={playlistSongs}
-              keyExtractor={(item, index) => item?.id?.toString() || `fallback-id-${index}`}
+              keyExtractor={(item, index) =>
+                item?.id?.toString() || `fallback-id-${index}`
+              }
               renderItem={({ item }) => (
                 <View style={styles.songItem}>
                   <Text style={styles.songTitle}>
                     {item.title} - {item.artist}
                   </Text>
-                  <TouchableOpacity onPress={() => handleRemoveSong(item.id)}>
-                    <Ionicons
-                      name="ellipsis-vertical"
-                      size={24}
-                      color="#ff0000"
-                    />
-                  </TouchableOpacity>
                 </View>
               )}
             />
