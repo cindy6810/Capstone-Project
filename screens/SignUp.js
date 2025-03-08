@@ -15,7 +15,6 @@ export default function SignUpPage() {
 
   const navigation = useNavigation();
 
-  // Animations
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const buttonScale = useRef(new Animated.Value(1)).current;
 
