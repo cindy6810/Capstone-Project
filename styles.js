@@ -160,6 +160,50 @@ export const styles = StyleSheet.create({
     elevation: 1,
   },
 
+  // SongCard Modal
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0,0,0,0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    padding: 20,
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 15,
+    textAlign: "center",
+  },
+  modalButtons: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+  },
+  // cancelButton: {
+  //   backgroundColor: "#ccc",
+  //   padding: 10,
+  //   borderRadius: 5,
+  //   flex: 1,
+  //   marginRight: 5,
+  //   alignItems: "center",
+  // },
+  confirmButton: {
+    backgroundColor: "#ff5555",
+    padding: 10,
+    borderRadius: 5,
+    flex: 1,
+    marginLeft: 2,
+    alignItems: "center",
+  },
+  // buttonText: {
+  //   color: "#fff",
+  //   fontWeight: "bold",
+  // },
   
   songCardImage: {
     width: 40,
