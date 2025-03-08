@@ -87,9 +87,7 @@ export default function UserPlayList({ navigation }) {
   };
 
   // Handle playlist selection
-  const handlePlaylistPress = (playlistId) => {
-    navigation.navigate('PlaylistDetails', { playlistId });
-  };
+  
 
   // Delete playlist
   const handleDeletePlaylist = async (playlistId) => {
@@ -131,8 +129,6 @@ export default function UserPlayList({ navigation }) {
           <PlayList
             title={item.title}
             playlistId={item.id}
-            image={require("../assets/graduation.jpg")}
-            onPress={() => handlePlaylistPress(item.id)}
             onDelete={() => handleDeletePlaylist(item.id)}
           />
         )}

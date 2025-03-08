@@ -38,7 +38,6 @@ const PlaylistDetail = () => {
   const [playlistSongs, setPlaylistSongs] = useState([]);
   const [userSongs, setUserSongs] = useState();
   const [availableSongs, setAvailableSongs] = useState([]);
-  const [songs, setSongs] = useState([]); // Define songs state
   const [modalVisible, setModalVisible] = useState(false); // State for modal visibility
 
   // Fetch playlist with its songs
@@ -92,11 +91,23 @@ const PlaylistDetail = () => {
   // Function to remove a song from the playlist
   const handleRemoveSong = async (playlistId, songId) => {
     try {
-      // Assuming removeSongFromPlaylist is already implemented in your service
+      console.log("Removing song with ID:", songId);
       await playlistService.removeSongFromPlaylist(playlistId, songId);
-      setSongs((prevSongs) =>
-        prevSongs.filter((song) => song.id !== songId)
-      ); // Remove song from state
+      
+      // Update userSongs - this is what the FlatList displays
+      setUserSongs((prevSongs) => 
+        prevSongs.filter((song) => {
+          const songIdentifier = song.id || song.songId;
+          return songIdentifier !== songId;
+        })
+      );
+      
+      setPlaylistSongs((prevSongs) => 
+        prevSongs.filter((song) => {
+          const songIdentifier = song.id || song.songId;
+          return songIdentifier !== songId;
+        })
+      );
     } catch (error) {
       console.error("Error removing song:", error);
     }
@@ -104,7 +115,11 @@ const PlaylistDetail = () => {
 
   // Function to check if a song is already in the playlist
   const isSongInPlaylist = (songId) => {
-    return playlistSongs.some((song) => song.id === songId);
+    return playlistSongs.some((song) => {
+      // Check both possible ID properties
+      const playlistSongId = song.id || song.songId;
+      return playlistSongId === songId;
+    });
   };
 
   const handleAddToPlaylist = (song) => {

@@ -1,13 +1,35 @@
-import React from "react";
-import { View, Text, TouchableOpacity, Image, ImageBackground, StyleSheet } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { useNavigation } from '@react-navigation/native';
-import { styles } from "../styles";
-import { Ionicons } from '@expo/vector-icons';
+import { playlistService } from "../services/playlistService";
 
 const defaultCoverImage = require('../assets/note.jpg');
 
-const PlayList = ({ title, playlistId, songs = [], image }) => {
+const PlayList = ({ title, playlistId, songs: initialSongs = [], image }) => {
   const navigation = useNavigation();
+  const [songs, setSongs] = useState(initialSongs);
+  
+  useEffect(() => {
+    const loadPlaylist = async () => {
+      if (initialSongs.length === 0 && playlistId) {
+        try {
+          const fetchedSongs = await playlistService.fetchPlaylist(playlistId);
+          setSongs(fetchedSongs || []);
+        } catch (error) {
+          console.error("Error fetching playlist songs:", error);
+        }
+      }
+    };
+    
+    loadPlaylist();
+  }, [playlistId]);
+  
+  // When initialSongs changes externally, update our state
+  useEffect(() => {
+    if (initialSongs.length > 0) {
+      setSongs(initialSongs);
+    }
+  }, [initialSongs]);
   
   const handlePress = () => {
     navigation.navigate("PlaylistDetail", {
@@ -16,7 +38,7 @@ const PlayList = ({ title, playlistId, songs = [], image }) => {
       songs,
       image
     });
-  }
+  };
   
   const getSongCovers = () => {
     const songCovers = [];
@@ -25,13 +47,14 @@ const PlayList = ({ title, playlistId, songs = [], image }) => {
       for (let i = 0; i < Math.min(songs.length, 4); i++) {
         if (songs[i]?.song_photo_url) {
           songCovers.push({ uri: songs[i].song_photo_url });
+        } else if (songs[i]?.image) {
+          songCovers.push(songs[i].image);
         } else {
           songCovers.push(defaultCoverImage);
         }
       }
     }
     
-    // Fill remaining slots with default image if needed
     while (songCovers.length < 4) {
       songCovers.push(defaultCoverImage);
     }
@@ -42,7 +65,7 @@ const PlayList = ({ title, playlistId, songs = [], image }) => {
   const songCovers = getSongCovers();
   
   return (
-    <TouchableOpacity style={styles.songCard2} onPress={handlePress}>
+    <TouchableOpacity style={styles.container} onPress={handlePress}>
       <View style={styles.playlistCoverGrid}>
         <View style={styles.playlistCoverRow}>
           <Image source={songCovers[0]} style={styles.playlistCoverQuadrant} />
@@ -54,14 +77,59 @@ const PlayList = ({ title, playlistId, songs = [], image }) => {
         </View>
         
         <View style={styles.playlistOverlay}>
-          <Text style={styles.songCard2Title}>{title}</Text>
-          <Text style={styles.songCard2Artist}>{songs.length || 0} songs</Text>
-          
-          
+          <Text style={styles.titleText}>{title}</Text>
+          <Text style={styles.subtitleText}>{`${songs.length || 0} songs`}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default PlayList;
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#222',
+    borderRadius: 10,
+    marginHorizontal: 10,
+    marginVertical: 8,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+  },
+  playlistCoverGrid: {
+    width: '100%',
+    aspectRatio: 1,
+    overflow: 'hidden',
+  },
+  playlistCoverRow: {
+    flexDirection: 'row',
+    height: '50%',
+  },
+  playlistCoverQuadrant: {
+    width: '50%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  playlistOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    padding: 10,
+  },
+  titleText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 2,
+  },
+  subtitleText: {
+    color: '#aaa',
+    fontSize: 14,
+  }
+});
+
+export default React.memo(PlayList);

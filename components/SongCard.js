@@ -31,14 +31,16 @@ const SongCard = ({ song, isCurrentSong, playlistId, showOptions, onRemove  }) =
   };
 
   const confirmRemove = async () => {
-    if (!song.id) {
-      console.error("Song ID is undefined");
+    const songId = song.id || song.songId;
+    
+    if (!songId) {
+      console.error("Song ID is undefined:", song);
       return;
     }
-
-    console.log("Confirmed removal of song:", song.id);  // Ensure song.id is being accessed correctly
-    await onRemove(playlistId, song.id);  // Call the remove function passed from parent
-    setModalVisible(false);  // Close the modal
+  
+    console.log("Confirmed removal of song:", songId);
+    await onRemove(playlistId, songId);  
+    setModalVisible(false);
   };
 
 

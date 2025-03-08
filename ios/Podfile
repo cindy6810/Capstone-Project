@@ -44,9 +44,6 @@ target 'Tunely' do
     :privacy_file_aggregation_enabled => podfile_properties['apple.privacyManifestAggregationEnabled'] != 'false',
   )
 
-  pod 'EXAV', :path => '../node_modules/expo-av/ios'
-  pod 'ExpoModulesCore', :path => '../node_modules/expo-modules-core'
-
   post_install do |installer|
     react_native_post_install(
       installer,
@@ -54,7 +51,6 @@ target 'Tunely' do
       :mac_catalyst_enabled => false,
       :ccache_enabled => podfile_properties['apple.ccacheEnabled'] == 'true',
     )
-
 
     # This is necessary for Xcode 14, because it signs resource bundles by default
     # when building for devices.
