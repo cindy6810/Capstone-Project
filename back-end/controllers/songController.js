@@ -1,5 +1,6 @@
 const SongModel = require('../models/songModel');
 const { uploadToS3, extractAudioMetadata} = require('../middleware/upload');
+const db = require('../db');
 
 const songController = {
   upload: async (req, res) => {
@@ -78,6 +79,53 @@ getMyUploads: async (req, res) => {
   } catch (error) {
     console.error('Error fetching uploads:', error);
     res.status(500).json({ error: 'Failed to fetch user uploads' });
+  }
+},
+
+//I will refactor this function to use the songModel to insert the record - nasser
+getRecentlyPlayed: async (req, res) => {
+  try {
+    const userId = req.user.uid;
+    const limit = parseInt(req.query.limit) || 7;
+    
+    const query = 
+      //group by song id to only get one record per song
+      //MAX(sp.played_at) to get the most recent play
+      `
+      SELECT s.*, MAX(sp.played_at) as most_recent_play
+      FROM songs s
+      JOIN song_plays sp ON s.songId = sp.song_id
+      WHERE sp.user_id = ?
+      GROUP BY s.songId 
+      ORDER BY most_recent_play DESC
+      LIMIT ?
+    `;
+    
+    const songs = await db.query(query, [userId, limit]);
+    res.json(songs);
+  } catch (error) {
+    console.error('Error fetching recently played songs:', error);
+    res.status(500).json({ error: error.message });
+  }
+},
+
+//I will refactor this function to use the songModel to insert the record - nasser
+recordSongPlay: async (req, res) => {
+  try {
+    const userId = req.user.uid;
+    const songId = req.params.id;
+    
+    // Insert record into songs_plays table
+    const query = `
+      INSERT INTO song_plays (user_id, song_id, played_at)
+      VALUES (?, ?, NOW())
+    `;
+    
+    await db.query(query, [userId, songId]);
+    res.status(200).json({ success: true, message: 'Play recorded successfully' });
+  } catch (error) {
+    console.error('Error recording song play:', error);
+    res.status(500).json({ error: error.message });
   }
 }
 };

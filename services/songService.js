@@ -108,6 +108,44 @@ export const songService = {
       console.error('Fetch my uploads error:', error);
       throw error;
     }
+  },
+  getRecentlyPlayed: async (limit = 10) => {
+    try {
+      const headers = await getAuthHeaders();
+      const response = await fetch(`${API_URL}/songs/recently-played?limit=${limit}`, {
+        method: 'GET',
+        headers
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error fetching recently played: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching recently played songs:', error);
+      throw error;
+    }
+  },
+  
+  recordSongPlay: async (songId) => {
+    try {
+      const headers = await getAuthHeaders();
+      const response = await fetch(`${API_URL}/songs/${songId}/play`, {
+        method: 'POST',
+        headers
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Error recording song play: ${response.status}`);
+      }
+  
+      return true;
+    } catch (error) {
+      console.error('Error recording song play:', error);
+      return false;
+    }
   }
 };
 

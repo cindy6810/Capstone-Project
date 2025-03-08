@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useRef } from 'react';
 import { Audio } from 'expo-av';
+import { songService } from '../services/songService';
 
 const AudioContext = createContext();
 
@@ -82,6 +83,14 @@ export const AudioProvider = ({ children }) => {
 
       setSound(newSound);
       setIsPlaying(true);
+
+      //record song play
+      try {
+        await songService.recordSongPlay(song.songId);
+      } catch (error) {
+        // Just log the error but don't stop playback if this fails
+        console.error('Failed to record song play:', error);
+      }
     } catch (error) {
       console.error('Error playing sound:', error);
     }
