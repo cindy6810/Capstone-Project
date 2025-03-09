@@ -28,6 +28,10 @@ export const useGetSongs = (source = 'all') => {
           case 'my-uploads':
             data = await songService.getMyUploads();
             break;
+
+          case 'recently-played':
+            data = await songService.getRecentlyPlayed();
+            break;
           
         
 

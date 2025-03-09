@@ -108,7 +108,6 @@ export default function HomeScreen() {
               title={item.title} 
               playlistId={item.id} 
               songs={item.songs || []}
-              // Use a default image if none is provided
               image={item.image ? { uri: item.image } : require("../assets/graduation.jpg")} 
             />
           )}

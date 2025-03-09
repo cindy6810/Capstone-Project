@@ -61,7 +61,7 @@ function SearchWithTopBar({ navigation }) {
 }
 
 function LibraryWithTopBar({ navigation }) {
-  return <ScreenWithTopBar navigation={navigation} title="Library"><LibraryScreen /></ScreenWithTopBar>;
+  return <LibraryScreen navigation={navigation} />;
 }
 
 function UserPlayListWithTopBar({ navigation }) {
