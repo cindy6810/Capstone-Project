@@ -63,7 +63,6 @@ export default function SongDetailScreen({ route }) {
         return;
       }
 
-      // Use the existing likesService
       const result = await likesService.toggleLike(song.songId);
       console.log('Toggle like result:', result);
       
@@ -104,13 +103,13 @@ export default function SongDetailScreen({ route }) {
 
   const onHandlerStateChange = (event) => {
     if (event.nativeEvent.state === State.END) {
-      if (event.nativeEvent.translationY > 200) {
+      if (event.nativeEvent.translationY > 100) {
         Animated.timing(translateY, {
           toValue: 200,
           duration: 200,
           useNativeDriver: true,
         }).start(() => navigation.goBack());
-      } else if (event.nativeEvent.translationY < -200) {
+      } else if (event.nativeEvent.translationY < -100) {
         navigation.navigate('CommentScreen', { song });
         Animated.timing(translateY, {
           toValue: -200,

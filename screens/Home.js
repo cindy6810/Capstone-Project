@@ -10,16 +10,19 @@ import { useAudio } from "../context/AudioContext";
 import { playlistService } from "../services/playlistService";
 
 export default function HomeScreen() {
-  const { songs, loading, error, refreshSongs } = useGetSongs();
+  const { songs, loading, error, refreshSongs } = useGetSongs('all');
+  const { 
+    songs: recentlyPlayedSongs, 
+    loading: recentPlayedLoading 
+  } = useGetSongs('recently-played');
   const { changePlaylist } = useAudio();
   const [playlists, setPlaylists] = useState([]);
   const [playlistsLoading, setPlaylistsLoading] = useState(true);
 
 
 
-  // Filtered song categories (Replace with your actual logic)
+  // Filtered song categories 
   const newReleases = songs.slice(0, 10);
-  const recentPlayed = songs.slice(-5);
   const trendingSongs = songs.slice(5, 15);
   const rapSongs = songs.filter((song) => song.genre === "Rap").slice(0, 10);
   const popSongs = songs.filter((song) => song.genre === "Pop").slice(0, 10);
@@ -35,7 +38,7 @@ export default function HomeScreen() {
     useCallback(() => {
       refreshSongs();
       
-      // Add this function to fetch playlists
+      // Fetch playlists
       const fetchPlaylists = async () => {
         try {
           setPlaylistsLoading(true);
@@ -78,7 +81,7 @@ export default function HomeScreen() {
         <ActivityIndicator size="large" color="#f1f1f1" />
       ) : (
         <FlatList
-          data={recentPlayed}
+          data={recentlyPlayedSongs.slice(0, 5)}
           keyExtractor={(item) => item.songId.toString()}
           renderItem={({ item }) => <SongCard song={item} />}
           scrollEnabled={false}

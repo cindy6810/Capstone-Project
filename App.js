@@ -30,6 +30,8 @@ import TopBarProfileIcon from './components/TopBarProfileIcon';
 import FloatingPlayer from './components/FloatingPlayer';
 import MyUploads from './screens/MyUploads';
 import MyUploadButton from './components/MyUploadButton';
+import AdminPage from './screens/adminPage';
+import AdminCheck from "./Utility/adminCheck";
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -225,6 +227,8 @@ export default function App() {
               <Stack.Screen name="SignUp" component={SignUpScreen} />
               <Stack.Screen name="Upload" component={UploadScreen} />
               <Stack.Screen name="MyUploads" component={MyUploads} />
+              <Stack.Screen name="AdminPage" component={AdminPage} options={{ headerShown: false }} />
+              <Stack.Screen name="AuthCheck" component={AdminCheck} />
             </Stack.Navigator>
             <FloatingPlayer />
           </View>
