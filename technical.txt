@@ -15,3 +15,9 @@ UI interactions even with frequent state updates.
 Why React? Why not others?
 
 Why Node.js? Why not others?
+
+Why Firebase? Why not others?
+
+Why AWS? Why not others?
+
+Why Javascript? Why not others?
