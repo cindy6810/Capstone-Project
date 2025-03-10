@@ -21,3 +21,5 @@ Why Firebase? Why not others?
 Why AWS? Why not others?
 
 Why Javascript? Why not others?
+
+Why mobile? Why not website?
