@@ -3,8 +3,8 @@ const db = require('../db');
 const SongModel = {
   create: async (songData) => {
     const sql = `
-      INSERT INTO songs (title, artistName, genre, fileUrl, duration, song_photo_url, user_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO songs (title, artistName, genre, fileUrl, duration, plays_count, likes_count, song_photo_url)
+      VALUES (?, ?, ?, ?, ?, 0, 0, ?)
     `;
     const params = [
       songData.title,
@@ -12,8 +12,7 @@ const SongModel = {
       songData.genre,
       songData.fileUrl,
       songData.duration,
-      songData.song_photo_url,
-      songData.user_id
+      songData.song_photo_url
     ];
     return await db.query(sql, params);
   },
@@ -26,17 +25,6 @@ const SongModel = {
     const sql = 'SELECT * FROM songs WHERE songId = ?';
     const results = await db.query(sql, [songId]);
     return results[0];
-  },
-
-  getByUserId: async (userId) => {
-    try {
-      const sql = 'SELECT * FROM songs WHERE user_id = ? ORDER BY songId DESC';
-      const results = await db.query(sql, [userId]);
-      return results;
-    } catch (error) {
-      console.error('Error fetching user songs:', error);
-      throw error;
-    }
   }
 };
 

@@ -3,9 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet, Animated } from 'react
 import { useNavigation, useNavigationState } from '@react-navigation/native';
 import { useAudio } from '../context/AudioContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { BlurView } from 'expo-blur'; 
-
-// import { LinearGradient } from 'expo-linear-gradient'; 
+import { BlurView } from 'expo-blur';
 
 const defaultCoverImage = require('../assets/note.jpg');
 
@@ -15,6 +13,7 @@ export default function FloatingPlayer() {
   const routes = useNavigationState(state => state?.routes);
   const currentRoute = routes?.[routes.length - 1];
 
+  if (!currentSong) return null;
 
   if (!currentSong || currentRoute?.name === 'SongDetail' || currentRoute?.name === 'CommentScreen' || 
     currentRoute?.name === 'Profile' || currentRoute?.name === 'Upload') return null;
@@ -38,15 +37,9 @@ export default function FloatingPlayer() {
       onPress={handlePress}
       activeOpacity={0.9}
     >
-    {/* <LinearGradient
-    colors={['#000428', '#004e92']}
-    start={{ x: 0, y: 0 }}
-    end={{ x: 1, y: 1 }}
-    style={styles.gradientBackground}
-    /> // gradient instead of blurview?? */} 
       <BlurView
-        intensity={80}
         tint="dark"
+        intensity={90}
         style={styles.blurContainer}
       />
       <View style={styles.content}>
@@ -111,13 +104,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 4,
     elevation: 5,
-  },
-  gradientBackground: { 
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
   },
   blurContainer: {
     position: 'absolute',

@@ -1,24 +1,27 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
   Image,
   TouchableOpacity,
   ScrollView,
-  FlatList,
+  SafeAreaView,
   StatusBar,
   StyleSheet,
-  ActivityIndicator,
 } from "react-native";
-import { useNavigation, useFocusEffect } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import TopBarProfileIcon from "../components/TopBarProfileIcon";
-import SongCard from "../components/SongCard";
-import { useGetSongs } from "../hooks/useGetSongs";
+
+const IMAGES = {
+  CONAN_GRAY: require("../assets/images/artists/conan-gray.png"),
+  NIGHT_VIBES: require("../assets/images/playlists/night-vibes.png"),
+  WIPED_OUT: require("../assets/images/albums/wiped-out.png"),
+};
 
 const COLORS = {
   BACKGROUND: "#000000",
   CARD_BACKGROUND: "#121212",
-  PRIMARY: "#182952", 
+  PRIMARY: "#E14594",
   TEXT_PRIMARY: "#FFFFFF",
   TEXT_SECONDARY: "#AAAAAA",
   INACTIVE: "rgba(42, 42, 42, 0.7)",
@@ -28,26 +31,7 @@ const COLORS = {
 
 export default function LibraryScreen() {
   const navigation = useNavigation();
-  const [activeTab, setActiveTab] = useState(false);
-  const { 
-    songs: likedSongs, 
-    loading: likedLoading, 
-    error: likedError, 
-    refreshSongs: refreshLikedSongs 
-  } = useGetSongs('liked');
-  const { 
-    songs: recentlyPlayedSongs, 
-    loading: recentlyPlayedLoading, 
-    error: recentlyPlayedError, 
-    refreshSongs: refreshRecentlyPlayed 
-  } = useGetSongs('recently-played');
-
-  useFocusEffect(
-    useCallback(() => {
-      refreshLikedSongs();
-      refreshRecentlyPlayed();
-    }, [])
-  );
+  const [activeTab, setActiveTab] = useState("Playlists");
 
   const handleProfilePress = () => {
     navigation.navigate("Profile");
@@ -57,9 +41,28 @@ export default function LibraryScreen() {
     navigation.navigate("UserPlayList");
   };
 
-  const handleMyUploadsPress = () => {
-    navigation.navigate("MyUploads");
-  };
+  const recentlyPlayed = [
+    {
+      id: "1",
+      title: "Conan Gray",
+      image: IMAGES.CONAN_GRAY,
+      fallbackColor: "#6B5B95",
+    },
+    {
+      id: "2",
+      title: "3:00am vibes",
+      subtitle: "18 songs",
+      image: IMAGES.NIGHT_VIBES,
+      fallbackColor: "#3498DB",
+    },
+    {
+      id: "3",
+      title: "Wiped Out!",
+      subtitle: "The Neighbourhood",
+      image: IMAGES.WIPED_OUT,
+      fallbackColor: "#2C3E50",
+    },
+  ];
 
   const TabButton = ({ title, isActive, onPress }) => {
     return (
@@ -68,6 +71,37 @@ export default function LibraryScreen() {
         onPress={onPress}
       >
         <Text style={styles.tabButtonText}>{title}</Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const LibraryItem = ({ item }) => {
+    const [imageError, setImageError] = useState(false);
+
+    return (
+      <TouchableOpacity style={styles.libraryItem}>
+        <View style={styles.itemImageContainer}>
+          {!imageError ? (
+            <Image
+              source={item.image}
+              style={styles.itemImage}
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <View
+              style={[
+                styles.fallbackImage,
+                { backgroundColor: item.fallbackColor },
+              ]}
+            />
+          )}
+        </View>
+        <View style={styles.itemTextContainer}>
+          <Text style={styles.itemTitle}>{item.title}</Text>
+          {item.subtitle && (
+            <Text style={styles.itemSubtitle}>{item.subtitle}</Text>
+          )}
+        </View>
       </TouchableOpacity>
     );
   };
@@ -112,85 +146,36 @@ export default function LibraryScreen() {
             }}
           />
           <TabButton
-            title="My Uploads"
-            isActive={activeTab === "MyUploads"}
-            onPress={() => {
-              setActiveTab("MyUploads");
-              handleMyUploadsPress();
-            }}
+            title="Artists"
+            isActive={activeTab === "Artists"}
+            onPress={() => setActiveTab("Artists")}
           />
           <TabButton
-            title="Liked"
-            isActive={activeTab === "Liked"}
-            onPress={() => {
-              // If already on Liked tab, go back to default view
-              if (activeTab === "Liked") {
-                setActiveTab(false); // Reset to default view
-              } else {
-                setActiveTab("Liked"); // Switch to Liked view
-              }
-            }}
+            title="Albums"
+            isActive={activeTab === "Albums"}
+            onPress={() => setActiveTab("Albums")}
           />
         </View>
 
-        {activeTab === "Liked" ? (
-          <>
-            <Text style={styles.sectionTitle}>Your Liked Songs</Text>
-            {likedLoading ? (
-              <ActivityIndicator size="large" color={COLORS.PRIMARY} />
-            ) : (
-              <FlatList
-                data={likedSongs}
-                keyExtractor={(item) => item.songId.toString()}
-                renderItem={({ item }) => <SongCard song={item} />}
-                contentContainerStyle={styles.songListContainer}
-                ListEmptyComponent={() => (
-                  <Text style={styles.emptyText}>No liked songs yet</Text>
-                )}
-                showsVerticalScrollIndicator={false}
-                onRefresh={refreshLikedSongs}
-                refreshing={likedLoading}
-              />
-            )}
-            {likedError && <Text style={styles.errorText}>{likedError}</Text>}
-          </>
-        ) : (
-          <ScrollView style={styles.scrollContainer}>
-            <ActionButton
-              icon="+"
-              title="Create New Playlist"
-              onPress={() => navigation.navigate("UserPlayList", { showCreateModal: true })}
-            />
-           
-            <ActionButton
-              icon="♥"
-              title="Your Liked Songs"
-              onPress={() => setActiveTab("Liked")}
-            />
-            
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Recently played</Text>
-              {recentlyPlayedLoading ? (
-                <ActivityIndicator size="small" color={COLORS.PRIMARY} />
-              ) : recentlyPlayedSongs && recentlyPlayedSongs.length > 0 ? (
-                <FlatList
-                  data={recentlyPlayedSongs} // Limit to 5 items
-                  keyExtractor={(item) => `recent-${item.songId}`}
-                  scrollEnabled={false}
-                  renderItem={({ item }) => <SongCard song={item} />}
-                  ListEmptyComponent={() => (
-                    <Text style={styles.emptyText}>No recently played songs</Text>
-                  )}
-                />
-              ) : (
-                <Text style={styles.emptyText}>No recently played songs</Text>
-              )}
-              {recentlyPlayedError && (
-                <Text style={styles.errorText}>{recentlyPlayedError}</Text>
-              )}
-            </View>
-          </ScrollView>
-        )}
+        <ScrollView style={styles.scrollContainer}>
+          <ActionButton
+            icon="+"
+            title="Add New Playlist"
+            onPress={() => console.log("Add new playlist")}
+          />
+          <ActionButton
+            icon="♥"
+            title="Your Liked Songs"
+            onPress={() => console.log("Liked songs")}
+          />
+
+          <View style={styles.sectionContainer}>
+            <Text style={styles.sectionTitle}>Recently played</Text>
+            {recentlyPlayed.map((item) => (
+              <LibraryItem key={item.id} item={item} />
+            ))}
+          </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -225,7 +210,7 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   headerTitle: {
-    color: COLORS.TEXT_PRIMARY,
+    color: COLORS.PRIMARY,
     fontSize: 24,
     fontWeight: "bold",
   },
@@ -255,9 +240,6 @@ const styles = StyleSheet.create({
   scrollContainer: {
     flex: 1,
   },
-  songListContainer: {
-    paddingBottom: 100,
-  },
   actionButton: {
     flexDirection: "row",
     alignItems: "center",
@@ -283,27 +265,43 @@ const styles = StyleSheet.create({
   },
   sectionContainer: {
     marginTop: 10,
-    marginBottom: 20,
   },
   sectionTitle: {
-    color: COLORS.TEXT_PRIMARY,
-    fontSize: 18,
-    fontWeight: "bold",
+    color: COLORS.PRIMARY,
+    fontSize: 16,
     marginBottom: 12,
   },
-  emptyText: {
+  libraryItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  itemImageContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 4,
+    marginRight: 12,
+    overflow: "hidden",
+    backgroundColor: "#333",
+  },
+  itemImage: {
+    width: "100%",
+    height: "100%",
+  },
+  fallbackImage: {
+    width: "100%",
+    height: "100%",
+  },
+  itemTextContainer: {
+    flex: 1,
+  },
+  itemTitle: {
+    color: COLORS.TEXT_PRIMARY,
+    fontSize: 16,
+    fontWeight: "500",
+  },
+  itemSubtitle: {
     color: COLORS.TEXT_SECONDARY,
     fontSize: 14,
-    textAlign: "center",
-    marginTop: 20,
-    fontStyle: "italic",
   },
-  errorText: {
-    color: "red",
-    textAlign: "center",
-    marginTop: 20,
-  },
-  recentSongCardContainer: {
-    marginBottom: 8,
-  }
 });

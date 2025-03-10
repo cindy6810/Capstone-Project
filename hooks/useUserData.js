@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { auth } from '../Utility/firebaseConfig';
+import { getCurrentUser } from '../Utility/googleAuth';
+import { getUserData } from '../Utility/firebaseConfig';
 import blankProfilePic from '../assets/blank_profile.png';
-import { authService } from '../services/authService';
 
 export const useUserData = () => {
   const [username, setUsername] = useState('User');
@@ -12,21 +13,20 @@ export const useUserData = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Check if user is logged in with Firebase
-        const firebaseUser = auth.currentUser;
-        
-        if (!firebaseUser) {
-          // No user logged in
-          setIsLoading(false);
+        const googleUser = await getCurrentUser();
+        if (googleUser) {
+          setUsername(googleUser.name);
+          setProfilePic(googleUser.photoUrl || blankProfilePic);
           return;
         }
-        
-        // Get user data from backend API
-        const userData = await authService.getCurrentUserProfile();
-        
-        if (userData && !userData.error) {
-          setUsername(userData.username || 'User');
-          setProfilePic(userData.profile_pic_url || blankProfilePic);
+
+        const firebaseUser = auth.currentUser;
+        if (firebaseUser) {
+          const userData = await getUserData(firebaseUser.uid);
+          if (userData?.username) {
+            setUsername(userData.username);
+            setProfilePic(firebaseUser.photoURL || blankProfilePic);
+          }
         }
       } catch (error) {
         setError(error);

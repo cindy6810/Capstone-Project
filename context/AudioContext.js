@@ -1,6 +1,5 @@
-import React, { createContext, useState, useContext, useRef } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import { Audio } from 'expo-av';
-import { songService } from '../services/songService';
 
 const AudioContext = createContext();
 
@@ -10,14 +9,6 @@ export const AudioProvider = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [playlist, setPlaylist] = useState([]);
   const [playlistSource, setPlaylistSource] = useState('all');
-  
-  // Use ref to track current song 
-  const currentSongRef = useRef(null);
-  
-  // Update ref whenever currentSong changes
-  React.useEffect(() => {
-    currentSongRef.current = currentSong;
-  }, [currentSong]);
 
   const changePlaylist = (songs, source) => {
     setPlaylist(songs);
@@ -25,13 +16,9 @@ export const AudioProvider = ({ children }) => {
   };
 
   const playNextSong = async () => {
-    // Use the ref for current song reference
-    const currentSongValue = currentSongRef.current;
+    if (!currentSong || playlist.length === 0) return;
     
-    if (!currentSongValue || playlist.length === 0) return;
-    
-    const currentIndex = playlist.findIndex(song => song.songId === currentSongValue.songId);
-    
+    const currentIndex = playlist.findIndex(song => song.songId === currentSong.songId);
     if (currentIndex === -1 || currentIndex === playlist.length - 1) return;
     
     const nextSong = playlist[currentIndex + 1];
@@ -50,7 +37,6 @@ export const AudioProvider = ({ children }) => {
 
   const playSound = async (song) => {
     try {
-      // Handle playing the same song
       if (currentSong?.songId === song.songId && sound) {
         if (isPlaying) {
           await pauseSound();
@@ -60,37 +46,21 @@ export const AudioProvider = ({ children }) => {
           return;
         }
       }
-      
       // Unload previous sound if exists
       if (sound) {
         await sound.unloadAsync();
         setSound(null);
       }
 
-      // Update the state and ref BEFORE creating the new sound
-      setCurrentSong(song);
-      currentSongRef.current = song;
-
       const { sound: newSound } = await Audio.Sound.createAsync(
         { uri: song.fileUrl },
-        { 
-          shouldPlay: true,
-          isLooping: false,
-          progressUpdateIntervalMillis: 500
-        },
+        { shouldPlay: true },
         onPlaybackStatusUpdate
       );
 
       setSound(newSound);
+      setCurrentSong(song);
       setIsPlaying(true);
-
-      //record song play
-      try {
-        await songService.recordSongPlay(song.songId);
-      } catch (error) {
-        // Just log the error but don't stop playback if this fails
-        console.error('Failed to record song play:', error);
-      }
     } catch (error) {
       console.error('Error playing sound:', error);
     }
@@ -119,26 +89,11 @@ export const AudioProvider = ({ children }) => {
   };
 
   const onPlaybackStatusUpdate = (status) => {
-    if (!status.isLoaded) return;
-    
-    // Set playing state based on playback status
-    setIsPlaying(status.isPlaying);
-    
-    // If song finished
-    if (status.didJustFinish) {
-      const songJustFinished = currentSongRef.current;
-      
-      if (songJustFinished && playlist.length > 0) {
-        const currentIndex = playlist.findIndex(song => song.songId === songJustFinished.songId);
-        
-        if (currentIndex !== -1 && currentIndex < playlist.length - 1) {
-          const nextSong = playlist[currentIndex + 1];
-          
-          // Use timeout to ensure proper cleanup between tracks
-          setTimeout(() => {
-            playSound(nextSong);
-          }, 500);
-        }
+    if (status.isLoaded) {
+      setIsPlaying(status.isPlaying);
+      if (status.didJustFinish) {
+        setIsPlaying(false);
+        playNextSong(); // Auto-play next song
       }
     }
   };

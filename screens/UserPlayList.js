@@ -1,199 +1,42 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, SafeAreaView, TouchableOpacity, Alert, Modal, TextInput } from "react-native";
+import React from "react";
+import { View, Text, FlatList, SafeAreaView, TouchableOpacity} from "react-native";
 import { styles } from "../styles";
 import PlayList from "../components/Playlist";
 import { Ionicons } from '@expo/vector-icons';
-import { playlistService } from "../services/playlistService";
-import { useFocusEffect } from '@react-navigation/native';
-import { songService } from "../services/songService";
 
-export default function UserPlayList({ navigation }) {
-  const [playlists, setPlaylists] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [playlistTitle, setPlaylistTitle] = useState("");
-  const [availableSongs, setAvailableSongs] = useState([]);
-  const [selectedSongs, setSelectedSongs] = useState([]);
+export default function UserPlayList() {
+  const playlists = [
+    { id: "1", title: "My Playlist 1", image: require("../assets/graduation.jpg") },
+    { id: "2", title: "My Playlist 2", image: require("../assets/graduation.jpg") },
+    { id: "3", title: "My Playlist 3", image: require("../assets/graduation.jpg") },
+    { id: "4", title: "My Playlist 4", image: require("../assets/graduation.jpg") },
+  ];
 
-  // Fetch playlists when screen comes into focus
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchPlaylists();
-      fetchAvailableSongs();
-      return () => {};
-    }, [])
-  );
-
-  // Fetch user's playlists
-  const fetchPlaylists = async () => {
-    try {
-      setLoading(true);
-      const data = await playlistService.getUserPlaylists();
-      setPlaylists(data);
-    } catch (error) {
-      console.error('Error fetching playlists:', error);
-      Alert.alert('Error', 'Failed to load your playlists');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Fetch available songs for playlist creation
-  const fetchAvailableSongs = async () => {
-    try {
-      const songs = await songService.getAllSongs();
-      setAvailableSongs(songs);
-    } catch (error) {
-      console.error('Error fetching songs:', error);
-    }
-  };
-
-  // Toggle song selection
-  const toggleSongSelection = (songId) => {
-    setSelectedSongs(prevSelected =>
-      prevSelected.includes(songId)
-        ? prevSelected.filter(id => id !== songId)
-        : [...prevSelected, songId]
-    );
-  };
-
-  // Create new playlist
-  const handleCreatePlaylist = async () => {
-    if (playlistTitle.trim() === '') {
-      Alert.alert('Error', 'Please enter a playlist title');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const result = await playlistService.createPlaylist({
-        title: playlistTitle,
-        songs: selectedSongs
-      });
-      
-      Alert.alert('Success', 'Playlist created successfully');
-      setModalVisible(false);
-      setPlaylistTitle('');
-      setSelectedSongs([]);
-      
-      // Refresh playlists to show the new one
-      fetchPlaylists();
-    } catch (error) {
-      console.error('Error creating playlist:', error);
-      Alert.alert('Error', 'Failed to create playlist');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Handle playlist selection
-  
-
-  // Delete playlist
-  const handleDeletePlaylist = async (playlistId) => {
-    Alert.alert(
-      'Confirm Delete',
-      'Are you sure you want to delete this playlist?',
-      [
-        { text: 'Cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setLoading(true);
-              await playlistService.deletePlaylist(playlistId);
-              fetchPlaylists();
-            } catch (error) {
-              console.error('Error deleting playlist:', error);
-              Alert.alert('Error', 'Failed to delete playlist');
-            } finally {
-              setLoading(false);
-            }
-          }
-        }
-      ]
-    );
+  const handleCreatePlaylist = () => {
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Your Playlists</Text>
-      
-      {loading && <Text style={styles.loadingText}>Loading...</Text>}
-      
       <FlatList
         data={playlists}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <PlayList
+          <PlayList 
             title={item.title}
             playlistId={item.id}
-            onDelete={() => handleDeletePlaylist(item.id)}
+            image={item.image}
           />
         )}
-        numColumns={2}
-        ListEmptyComponent={
-          !loading && (
-            <Text style={styles.emptyListText}>
-              You don't have any playlists yet. Create one!
-            </Text>
-          )
-        }
+        showsVerticalScrollIndicator={false}
       />
-
-      {/* Create Playlist Button */}
-      <TouchableOpacity
+      <TouchableOpacity 
         style={styles.fabButton}
-        onPress={() => setModalVisible(true)}
-        disabled={loading}
+        onPress={handleCreatePlaylist}
       >
-        <Ionicons name="add-circle" size={24} color="black" />
+        <Ionicons name="add" size={24} color="black" />
         <Text style={styles.fabButtonText}>New</Text>
       </TouchableOpacity>
-
-      {/* Create Playlist Modal */}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={true}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Create New Playlist</Text>
-            
-            <TextInput
-              style={styles.input}
-              placeholder="Playlist title"
-              value={playlistTitle}
-              onChangeText={setPlaylistTitle}
-            />
-
-            <TouchableOpacity
-              style={styles.createButton}
-              onPress={handleCreatePlaylist}
-              disabled={loading}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? 'Creating...' : 'Create Playlist'}
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={() => {
-                setModalVisible(false);
-                setPlaylistTitle('');
-                setSelectedSongs([]);
-              }}
-              disabled={loading}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 }

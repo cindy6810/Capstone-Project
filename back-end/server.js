@@ -10,13 +10,7 @@ app.use(express.json());
 
 // Routes
 const songRoutes = require('./routes/songRoutes');
-const userRoutes = require('./routes/userRoutes');
-const playlistRoutes = require('./routes/playlistRoutes');
-const adminRoutes = require('./routes/adminRoutes');
 app.use('/api/songs', songRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/playlists', playlistRoutes);
-app.use('/api/admin', adminRoutes);
 
 // Error handling
 app.use((err, req, res, next) => {

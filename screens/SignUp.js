@@ -1,10 +1,14 @@
-import React, { useState, useRef, useEffect } from "react";
-import { 
-  View, Text, TouchableOpacity, TextInput, StyleSheet, Alert, Animated 
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  StyleSheet,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Button } from "react-native-paper";
-import { authService } from "../services/authService";
+import { useNavigation } from "@react-navigation/native"; 
+import { signUpWithEmailAndPassword } from "../Utility/firebaseConfig"; 
 
 export default function SignUpPage() {
   const [username, setUsername] = useState("");
@@ -13,32 +17,7 @@ export default function SignUpPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const navigation = useNavigation();
-
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const buttonScale = useRef(new Animated.Value(1)).current;
-
-  useEffect(() => {
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
-  }, []);
-
-  const handlePressIn = () => {
-    Animated.spring(buttonScale, {
-      toValue: 0.95,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(buttonScale, {
-      toValue: 1,
-      useNativeDriver: true,
-    }).start();
-  };
+  const navigation = useNavigation(); 
 
   const handleSignUp = async () => {
     if (email !== confirmEmail) {
@@ -51,88 +30,62 @@ export default function SignUpPage() {
     }
 
     try {
-      await authService.registerUser(email, password, username);
+      await signUpWithEmailAndPassword(email, password);  
       Alert.alert("Success", "User signed up successfully!");
       navigation.navigate("Login");
     } catch (error) {
-      Alert.alert("Error", error.message);
+      Alert.alert("Error", error.message); 
     }
   };
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.signUpBox, { opacity: fadeAnim }]}>
-        {/* Back Button */}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <Text style={styles.backButtonText}>Back</Text>
+      </TouchableOpacity>
 
-        <Text style={styles.title}>Sign Up</Text>
-
-        {/* Username Input */}
-        <TextInput
-          placeholder="Username"
-          placeholderTextColor="#aaa"
-          style={styles.input}
-          value={username}
-          onChangeText={setUsername}
-        />
-
-        {/* Email Input */}
-        <TextInput
-          placeholder="Email"
-          placeholderTextColor="#aaa"
-          style={styles.input}
-          value={email}
-          onChangeText={setEmail}
-        />
-
-        {/* Confirm Email Input */}
-        <TextInput
-          placeholder="Confirm Email"
-          placeholderTextColor="#aaa"
-          style={styles.input}
-          value={confirmEmail}
-          onChangeText={setConfirmEmail}
-        />
-
-        {/* Password Input */}
-        <TextInput
-          placeholder="Password"
-          placeholderTextColor="#aaa"
-          style={styles.input}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
-
-        {/* Confirm Password Input */}
-        <TextInput
-          placeholder="Confirm Password"
-          placeholderTextColor="#aaa"
-          style={styles.input}
-          secureTextEntry
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-        />
-
-        {/* Sign Up Button */}
-        <Animated.View style={{ transform: [{ scale: buttonScale }] }}>
-          <Button
-            mode="contained"
-            onPress={handleSignUp}
-            icon="account-plus"
-            uppercase={false}
-            contentStyle={{ height: 50, backgroundColor: "#213555" }}
-            style={styles.paperButton}
-            labelStyle={{ fontWeight: "700", fontSize: 16 }}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-          >
-            Sign Up
-          </Button>
-        </Animated.View>
-      </Animated.View>
+      <Text style={styles.title}>Sign Up</Text>
+      
+      <TextInput
+        placeholder="Username"
+        placeholderTextColor="#aaa"
+        style={styles.input}
+        value={username}
+        onChangeText={setUsername}
+      />
+      <TextInput
+        placeholder="Email"
+        placeholderTextColor="#aaa"
+        style={styles.input}
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        placeholder="Confirm Email"
+        placeholderTextColor="#aaa"
+        style={styles.input}
+        value={confirmEmail}
+        onChangeText={setConfirmEmail}
+      />
+      <TextInput
+        placeholder="Password"
+        placeholderTextColor="#aaa"
+        style={styles.input}
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+      <TextInput
+        placeholder="Confirm Password"
+        placeholderTextColor="#aaa"
+        style={styles.input}
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -143,53 +96,41 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#1a1a1a",
     paddingHorizontal: 20,
-  },
-  signUpBox: {
-    width: "90%",
-    maxWidth: 400,
-    backgroundColor: "#182952",
-    padding: 30,
-    borderRadius: 15,
-    alignItems: "center",
-    elevation: 10,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.4,
-    shadowRadius: 10,
+    backgroundColor: "#1a1a1a", 
   },
   title: {
     fontSize: 28,
-    fontWeight: "bold",
-    color: "#F1F1F1",
+    color: "#fff",
     marginBottom: 20,
   },
   input: {
-    backgroundColor: "#F1F1F1",
-    color: "#000",
+    backgroundColor: "#fff",
     borderRadius: 8,
     width: "100%",
     padding: 15,
-    marginBottom: 12,
-    fontSize: 16,
+    marginBottom: 10,
   },
-  paperButton: {
+  button: {
+    backgroundColor: "#f1f1f1",
+    padding: 15,
+    borderRadius: 8,
     width: "100%",
-    borderRadius: 25,
-    marginBottom: 15,
-    elevation: 8,
-    marginTop: 10,
-    alignSelf: 'center',
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  buttonText: {
+    color: "#2B3595",
+    fontWeight: "bold",
   },
   backButton: {
     position: "absolute",
-    top: 15,
-    left: 15,
-    padding: 8,
+    top: 80,
+    left: 20,
+    padding: 10,
   },
   backButtonText: {
-    color: "#F1F1F1",
+    color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
   },
