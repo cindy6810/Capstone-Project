@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     borderRadius: 25,
     padding: 10,
     marginBottom: 20,
-    color: "#f1f1f1", 
+    color: "#000", 
   },
   // Tab bar customization
   tabBarStyle: {

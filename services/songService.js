@@ -2,6 +2,7 @@ import { API_URL } from '../config/apiConfig';
 import { Platform } from 'react-native';
 import { auth } from '../Utility/firebaseConfig';
 
+
 const getAuthHeaders = async () => {
   const user = auth.currentUser;
   if (!user) return {};
@@ -145,6 +146,19 @@ export const songService = {
     } catch (error) {
       console.error('Error recording song play:', error);
       return false;
+    }
+  },
+
+  searchSongs: async (query) => {
+    try {
+      const response = await fetch(`${API_URL}/search?query=${encodeURIComponent(query)}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch songs');
+      }
+      return await response.json();
+    } catch (error) {
+      console.error('Error searching songs:', error);
+      return [];
     }
   }
 };

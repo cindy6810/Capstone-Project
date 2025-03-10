@@ -1,26 +1,36 @@
-import React from "react";
+import React, { useState } from "react";
 import { TextInput, View, FlatList, TouchableOpacity, Text } from "react-native";
 import { styles } from "../styles";
 import SongCard from "../components/SongCard";
-
+import { songService } from '../services/songService';
 
 
 export default function SearchScreen() {
 
-  const searchResults = [
-    { id: "1", title: "Search Result 1", artist: "Artist 1", image: require("../assets/note.jpg") },
-    { id: "2", title: "Search Result 2", artist: "Artist 2", image: require("../assets/note.jpg") },
-  ];
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+
+  const handleSearch = async (text) => {
+    setQuery(text);
+    if (text.length > 2) { // Avoid searching for short queries
+      const songs = await songService.searchSongs(text);
+      setResults(songs);
+    } else {
+      setResults([]);
+    }
+  };
   
   return (
     <View style={styles.container}>
       <TextInput
         style={styles.searchBar}
-        placeholder="Search song, artist, album..."
-        placeholderTextColor="#E14594"
+        placeholder="Search for a song"
+        placeholderTextColor="#000"
+        value={query}
+        onChangeText={handleSearch}
       />
       <FlatList
-        data={searchResults}
+        data={results}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => <SongCard song={item} />}
       />

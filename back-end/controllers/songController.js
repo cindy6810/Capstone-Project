@@ -124,6 +124,24 @@ recordSongPlay: async (req, res) => {
     console.error('Error recording song play:', error);
     res.status(500).json({ error: error.message });
   }
+},
+searchSongs: async (req, res) => {
+  try {
+    const { query } = req.query;
+    if (!query) {
+      return res.status(400).json({ error: 'Search query is required' });
+    }
+
+    // Search for songs by title or artist
+    const sql = `SELECT * FROM songs WHERE title LIKE ? OR artist LIKE ?`;
+    const values = [`%${query}%`, `%${query}%`];
+
+    const [rows] = await db.query(sql, values);
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error('Error searching songs:', error);
+    res.status(500).json({ error: error.message });
+  }
 }
 };
 

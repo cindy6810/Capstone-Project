@@ -15,6 +15,8 @@ router.get('/myUploads', verifyToken, songController.getMyUploads);
 router.post('/:id/play', verifyToken, songController.recordSongPlay);
 router.get('/:id', songController.getSongById);
 
+// Search song
+router.get('/search', songController.searchSongs);
 
 //like routes
 router.get('/:id/like', verifyToken, likesController.checkLike);
