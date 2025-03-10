@@ -132,6 +132,7 @@ export default function UserPlayList({ navigation }) {
             onDelete={() => handleDeletePlaylist(item.id)}
           />
         )}
+        numColumns={2}
         ListEmptyComponent={
           !loading && (
             <Text style={styles.emptyListText}>
@@ -147,8 +148,8 @@ export default function UserPlayList({ navigation }) {
         onPress={() => setModalVisible(true)}
         disabled={loading}
       >
-        <Ionicons name="add" size={24} color="white" />
-        <Text style={styles.fabButtonText}>New Playlist</Text>
+        <Ionicons name="add-circle" size={24} color="black" />
+        <Text style={styles.fabButtonText}>New</Text>
       </TouchableOpacity>
 
       {/* Create Playlist Modal */}

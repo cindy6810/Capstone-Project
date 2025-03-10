@@ -112,7 +112,7 @@ export default function Upload({ navigation }) {
           disabled={loading}
         >
           <Text style={styles.buttonText}>
-            {coverImage ? 'Cover Selected' : 'Select Cover (Optional)'}
+            {coverImage ? 'Cover Selected' : 'Select Cover'}
           </Text>
         </TouchableOpacity>
 
@@ -140,15 +140,28 @@ export default function Upload({ navigation }) {
           onChangeText={setArtistName}
           editable={!loading}
         />
-
-        <TextInput
-          style={styles.input}
-          placeholder="Genre"
-          placeholderTextColor="#aaa"
-          value={genre}
-          onChangeText={setGenre}
-          editable={!loading}
-        />
+        {/*changed to picker so users can select genre that we use through out the app instead of random ones*/}
+        <View style={styles.pickerContainer}>
+          <Text style={styles.pickerLabel}>Genre</Text>
+          <Picker
+            selectedValue={genre}
+            onValueChange={(itemValue) => setGenre(itemValue)}
+            enabled={!loading}
+            style={styles.picker}
+            dropdownIconColor="#fff"
+            itemStyle={styles.pickerItem}
+          >
+            <Picker.Item label="Select a genre" value="" color="#aaa" />
+            <Picker.Item label="Pop" value="Pop" color="#fff" />
+            <Picker.Item label="HipHop/Rap" value="Rap" color="#fff" />
+            <Picker.Item label="R&B" value="R&B" color="#fff" />
+            <Picker.Item label="Rock" value="Rock" color="#fff" />
+            <Picker.Item label="Country" value="Country" color="#fff" />
+            <Picker.Item label="Electronic" value="Electronic" color="#fff" />
+            <Picker.Item label="Jazz" value="Jazz" color="#fff" />
+            <Picker.Item label="Other" value="Other" color="#fff" />
+          </Picker>
+        </View>
 
         <TouchableOpacity 
           style={[styles.button, loading && styles.buttonDisabled]} 
@@ -209,5 +222,25 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: 'center',
     marginVertical: 10,
-  }
+  },
+  pickerContainer: {
+    backgroundColor: '#2a2a2a',
+    borderRadius: 8,
+    marginVertical: 10,
+    overflow: 'hidden',
+  },
+  pickerLabel: {
+    color: '#aaa',
+    fontSize: 14,
+    paddingLeft: 15,
+    paddingTop: 5,
+  },
+  picker: {
+    color: '#f1f1f1',
+    backgroundColor: 'transparent',
+  },
+  pickerItem: {
+    color: '#f1f1f1',
+    backgroundColor: '#2a2a2a',
+  },
 });

@@ -75,19 +75,18 @@ const PlayList = ({ title, playlistId, songs: initialSongs = [], image }) => {
           <Image source={songCovers[2]} style={styles.playlistCoverQuadrant} />
           <Image source={songCovers[3]} style={styles.playlistCoverQuadrant} />
         </View>
-        
-        <View style={styles.playlistOverlay}>
-          <Text style={styles.titleText}>{title}</Text>
-          <Text style={styles.subtitleText}>{`${songs.length || 0} songs`}</Text>
-        </View>
       </View>
+      
+      
+        <Text style={styles.titleText} numberOfLines={1}>{title}</Text>
+     
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#222',
+    backgroundColor: 'transparent',
     borderRadius: 10,
     marginHorizontal: 10,
     marginVertical: 8,
@@ -97,6 +96,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
+    width: '45%',
   },
   playlistCoverGrid: {
     width: '100%',
@@ -118,18 +118,19 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'rgba(0,0,0,0.7)',
-    padding: 10,
+    padding: 5,
   },
   titleText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 2,
+    marginTop: 7,
   },
   subtitleText: {
     color: '#aaa',
     fontSize: 14,
-  }
+  },
 });
 
 export default React.memo(PlayList);

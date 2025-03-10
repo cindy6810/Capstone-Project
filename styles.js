@@ -245,10 +245,17 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
 
+  songCard2Artist: {
+    fontSize: 12,
+    color: "#ccc",
+    textAlign: "center",
+    marginTop: 2,
+  },
+
   fabButton: {
     position: 'absolute',
     right: 20,
-    bottom: 20,
+    bottom: 55,
     backgroundColor: '#fff',
     paddingVertical: 12,
     paddingHorizontal: 20,

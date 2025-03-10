@@ -114,6 +114,7 @@ export default function HomeScreen() {
               image={item.image ? { uri: item.image } : require("../assets/graduation.jpg")} 
             />
           )}
+          numColumns={2}
           showsVerticalScrollIndicator={false}
           onRefresh={refreshSongs}
           refreshing={loading}
