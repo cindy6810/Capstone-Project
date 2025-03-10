@@ -3,16 +3,48 @@ const db = require('../db');
 const UserModel = {
   create: async (userData) => {
     const sql = `
-    INSERT INTO users (id, username, email, profile_pic_url)
-        VALUES (?, ?, ?, ?) 
+    INSERT INTO users (id, username, email, profile_pic_url, role)
+        VALUES (?, ?, ?, ?, ?) 
         `;
     const params = [
       userData.id,
       userData.username,
       userData.email,
-      userData.profile_pic_url
+      userData.profile_pic_url,
+      userData.role || 'user'
     ];
     return await db.query(sql, params);
+},
+
+updateUserRole: async (userId, role) => {
+  const sql = 'UPDATE users SET role = ? WHERE id = ?';
+  return await db.query(sql, [role, userId]);
+},
+
+getAllUsers: async () => {
+  const sql = 'SELECT id, username, email, profile_pic_url, role, created_at FROM users';
+  return await db.query(sql);
+},
+
+deleteUser: async (userId) => {
+  // Delete user from local database
+  const sql = 'DELETE FROM users WHERE id = ?';
+  return await db.query(sql, [userId]);
+},
+
+isAdmin: async (userId) => {
+  const sql = 'SELECT role FROM users WHERE id = ?';
+  const results = await db.query(sql, [userId]);
+  if (results.length === 0) return false;
+  return ['admin', 'superadmin'].includes(results[0].role);
+},
+
+// Check if a user is superadmin
+isSuperAdmin: async (userId) => {
+  const sql = 'SELECT role FROM users WHERE id = ?';
+  const results = await db.query(sql, [userId]);
+  if (results.length === 0) return false;
+  return results[0].role === 'superadmin';
 },
 
 addLikedSong: async (userId, songId) => {

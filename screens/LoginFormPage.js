@@ -44,7 +44,7 @@ export default function LoginFormPage() {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       Alert.alert("Success", "Logged in successfully!");
-      navigation.navigate("Home"); 
+      navigation.navigate("AuthCheck"); 
     } catch (error) {
       Alert.alert("Error", error.message);
     }
@@ -55,7 +55,7 @@ export default function LoginFormPage() {
     try {
       const userInfo = await authService.signInWithGoogleAuth();
       Alert.alert("Success", "Logged in with Google successfully!");
-      navigation.navigate("Home");
+      navigation.navigate("AuthCheck");
     } catch (error) {
       Alert.alert("Error", error.message || "Failed to sign in with Google");
     } finally {

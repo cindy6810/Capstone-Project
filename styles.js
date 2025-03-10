@@ -357,6 +357,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: 10,
     marginBottom: 5,
+    marginTop: -15,
     width: '100%',
     gap: 10,
   },
@@ -417,5 +418,11 @@ export const styles = StyleSheet.create({
     color: "red",
     textAlign: "center",
   },
+  tabContainer: {
+  flexDirection: "row",
+  marginBottom: 20,
+  paddingHorizontal: 16,
+  paddingTop: 10,
+},
 
 });

@@ -6,7 +6,7 @@ const serviceAccountPath = path.resolve(__dirname, '../serviceAccountKey.json');
 const serviceAccount = require(serviceAccountPath);
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+  credential: admin.credential.cert(serviceAccount),
 });
 
 console.log('Firebase Admin initialized successfully');

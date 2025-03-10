@@ -82,34 +82,31 @@ getMyUploads: async (req, res) => {
   }
 },
 
-//I will refactor this function to use the songModel to insert the record - nasser
+
 getRecentlyPlayed: async (req, res) => {
   try {
     const userId = req.user.uid;
     const limit = parseInt(req.query.limit) || 7;
     
-    const query = 
-      //group by song id to only get one record per song
-      //MAX(sp.played_at) to get the most recent play
-      `
+    // Create the query with hardcoded limit to avoid parameter issues
+    const query = `
       SELECT s.*, MAX(sp.played_at) as most_recent_play
       FROM songs s
       JOIN song_plays sp ON s.songId = sp.song_id
       WHERE sp.user_id = ?
       GROUP BY s.songId 
       ORDER BY most_recent_play DESC
-      LIMIT ?
+      LIMIT ${limit}
     `;
     
-    const songs = await db.query(query, [userId, limit]);
+    const songs = await db.query(query, [userId]);
     res.json(songs);
   } catch (error) {
     console.error('Error fetching recently played songs:', error);
-    res.status(500).json({ error: error.message });
+    res.json([]);
   }
 },
 
-//I will refactor this function to use the songModel to insert the record - nasser
 recordSongPlay: async (req, res) => {
   try {
     const userId = req.user.uid;

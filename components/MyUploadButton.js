@@ -17,10 +17,10 @@ export default function MyUploadButton() {
 
   return (
     <TouchableOpacity 
-      style={[styles.button, isActive && styles.activeButton]} 
+      style={[styles.tabButton, isActive && styles.activeTabButton]} 
       onPress={handlePress}
     >
-      <Text style={[styles.buttonText, isActive && styles.activeText]}>
+      <Text style={styles.tabButtonText}>
         My Uploads
       </Text>
     </TouchableOpacity>
@@ -28,26 +28,21 @@ export default function MyUploadButton() {
 }
 
 const styles = StyleSheet.create({
-  button: {
-    backgroundColor: "rgba(42, 42, 42, 0.7)", // Semi-transparent background
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 10, 
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 15,
-    width: "40%",
+  tabButton: {
+    backgroundColor: "rgba(42, 42, 42, 0.7)",
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    marginRight: 8,
+    height: 36,
   },
-  activeButton: {
-    backgroundColor: '#182952',
+  activeTabButton: {
+    backgroundColor: "#1D1D1D",
+    borderWidth: 1,
+    borderColor: "#444",
   },
-  buttonText: {
-    color: '#f1f1f1',
-    fontSize: 16,
-    fontWeight: '600',
-    textAlign: 'center',
-  },
-  activeText: {
-    color: '#fff',
+  tabButtonText: {
+    color: "#FFFFFF",
+    fontSize: 14,
   }
 });

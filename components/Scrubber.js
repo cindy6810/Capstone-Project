@@ -68,7 +68,7 @@ export default function Scrubber() {
       // Calculate the new position in milliseconds
       const newPosition = Math.floor(value * duration);
       
-      // Use the more reliable seekToPositionAsync method
+
       await sound.setStatusAsync({
         positionMillis: newPosition,
         shouldPlay: isPlaying, // Maintain the current play state
