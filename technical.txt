@@ -11,3 +11,7 @@ experience. Its component-based architecture ensures reusability, making feature
 like playlists, song lists, and user profiles efficient to develop and maintain.
 Additionally, React’s virtual DOM optimizes rendering performance, ensuring smooth 
 UI interactions even with frequent state updates.
+
+Why React? Why not others?
+
+Why Node.js? Why not others?
